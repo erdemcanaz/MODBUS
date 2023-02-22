@@ -11,11 +11,11 @@
 #define RS485_SOFTWARE_SERIAL_TX_PIN 8
 #define RS485_OUTPUT_ENABLE_PIN 9
 
-#define EBYTE_M0_PIN 2
-#define EBYTE_M1_PIN 3
-#define EBYTE_TX_PIN 4  //Software serial RX
-#define EBYTE_RX_PIN 5  //Software serial TX
-#define EBYTE_AUX_PIN 6
+#define EBYTE_E32_M0_PIN 2
+#define EBYTE_E32_M1_PIN 3
+#define EBYTE_E32_TX_PIN 4  //Software serial RX
+#define EBYTE_E32_RX_PIN 5  //Software serial TX
+#define EBYTE_E32_AUX_PIN 6
 
 #define DEVICE_CHANNEL 12  //0-255
 #define DEVICE_ADDRESS 1 //0-65535
@@ -31,13 +31,18 @@
 //PARAMETRIC VARIABLES
 #define DEBUG true
 #define HARDWARE_SERIAL_WAIT_COMPUTER_TRANSFER_MS 10 
-#define LORA_REQUEST_TIMEOUT_MS 750
+#define LORA_REQUEST_WAIT_REPLY_TIME_MS 1000
 
 //----------------------------------------------------------------------------
-SoftwareSerial lora_serial_instance(EBYTE_TX_PIN, EBYTE_RX_PIN);  // software Rx, software Tx
+SoftwareSerial LoraSerial(EBYTE_E32_TX_PIN, EBYTE_E32_RX_PIN);  // software Rx, software Tx
 
 void setup() {
+  configure_ebyte_pins();
+
   Serial.begin(HARDWARE_SERIAL_BAUD_RATE);
+  LoraSerial.begin(LORA_SOFTWARE_SERIAL_BAUD_RATE);
+
+  while(!set_ebyte_parameters(false));
 }
 
 void loop() {
