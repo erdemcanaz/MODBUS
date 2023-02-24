@@ -1,5 +1,34 @@
 //Functions for device_1_slave_script
 uint8_t request_package_buffer[PACKAGE_SIZE_BYTE];
+void broadcast_to_return_error_package(uint8_t status_code) {
+
+  request_package_buffer[0] = status_code;
+
+  uint16_t CRC_calculated = calculate_CRC(true, 0, request_package_buffer[0]);
+  for (uint8_t i = 1; i < PACKAGE_SIZE_BYTE - 2; i++) {
+    CRC_calculated = calculate_CRC(false, CRC_calculated, request_package_buffer[i]);
+  }
+  uint8_t CRC_calculated_significant = CRC_calculated >> 8;
+  uint8_t CRC_calculated_least = CRC_calculated % 256;
+  request_package_buffer[PACKAGE_SIZE_BYTE - 2] = CRC_calculated_least;
+  request_package_buffer[PACKAGE_SIZE_BYTE - 1] = CRC_calculated_significant;
+  
+  //SEND RESPONSE
+  if (digitalRead(EBYTE_E32_M0_PIN) || digitalRead(EBYTE_E32_M1_PIN)) {
+    digitalWrite(EBYTE_E32_M0_PIN, LOW);
+    digitalWrite(EBYTE_E32_M1_PIN, LOW);
+    delay(EBYTE_OPERATION_MODE_CHANGE_DELAY_MS);      
+  }
+  //Fixed broadcast
+  LoraSerial.write(request_package_buffer[5]);
+  LoraSerial.write(request_package_buffer[6]);
+  LoraSerial.write(DEVICE_CHANNEL);
+  //Data
+  for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE; i++) {
+    LoraSerial.write(request_package_buffer[i]);
+  }
+}
+
 
 void listen_and_execute_valid_master_lora_orders() {
   if (!LoraSerial.isListening()) LoraSerial.listen();
@@ -16,7 +45,7 @@ void listen_and_execute_valid_master_lora_orders() {
   while (LoraSerial.available() > 0) LoraSerial.read();
 
   //(2)______________________________________________________________________________________________________________
-  bool is_received_byte_count_correct = received_byte_count == PACKAGE_SIZE_BYTE;
+  bool is_received_byte_count_correct = (received_byte_count == PACKAGE_SIZE_BYTE);
   bool is_received_CRC_correct = true;
 
   uint16_t CRC_calculated = calculate_CRC(true, 0, request_package_buffer[0]);
@@ -28,33 +57,41 @@ void listen_and_execute_valid_master_lora_orders() {
   if (!is_received_byte_count_correct || !is_received_CRC_correct) {
     if (DEBUG && !is_received_byte_count_correct) Serial.println("Received byte count is not enough, it is: " + String(received_byte_count));
     else if (DEBUG && !is_received_CRC_correct) Serial.println("Received CRC(lst-sig):" + String(request_package_buffer[PACKAGE_SIZE_BYTE - 2]) + "," + String(request_package_buffer[PACKAGE_SIZE_BYTE - 1]) + ". However True CRC(lst-sig):" + String((CRC_calculated % 256)) + "," + String((CRC_calculated >> 8)));
-    //TODO: master lora data package is received but it is corrupted
-    Serial.println("STATUS-404");
+    broadcast_to_return_error_package(207);  //master lora data package is received but it is corrupted
     return;
   }
 
   //(3)______________________________________________________________________________________________________________
-  if (request_package_buffer[2] == 1 && request_package_buffer[3] == 99) { ; }  //greet_master
-  else if (request_package_buffer[2] == 1 && request_package_buffer[3] == 0) {
+  if (request_package_buffer[3] == 1 && request_package_buffer[4] == 98) {
+    broadcast_to_return_error_package(2);  //greet_master
+    return;
+  } else if (request_package_buffer[3] == 2 && request_package_buffer[4] == 0) {
 
-    if(!RS485_Serial.isListening())RS485_Serial.listen();
+    if (!RS485_Serial.isListening()) RS485_Serial.listen();
     while (RS485_Serial.available() > 0) RS485_Serial.read();
-    for (uint8_t i = 0; i < DATA_SIZE_BYTE; i++) request_package_buffer[26 + i] = 0;
+
+    request_package_buffer[26] = 0;
+    for (uint8_t i = 0; i < DATA_SIZE_BYTE; i++) request_package_buffer[27 + i] = 0;
 
     digitalWrite(RS485_OUTPUT_ENABLE_PIN, HIGH);
-    for (uint8_t i = 0; i < request_package_buffer[8]; i++) {
-      RS485_Serial.write(request_package_buffer[9 + i]);
+    for (uint8_t i = 0; i < request_package_buffer[9]; i++) {
+      RS485_Serial.write(request_package_buffer[10 + i]);
     }
     digitalWrite(RS485_OUTPUT_ENABLE_PIN, LOW);
 
     delay(RS485_REQUEST_WAIT_REPLY_TIME_MS);
     uint8_t response_data_count = RS485_Serial.available();
 
-    if (response_data_count > DATA_SIZE_BYTE) response_data_count = DATA_SIZE_BYTE;//TODO:add error 405
-    else if (response_data_count == 0) response_data_count = 0;//TODO:add error 406)
-    request_package_buffer[25] = response_data_count;
-    for (uint8_t i = 0; i < request_package_buffer[25]; i++) {
-      request_package_buffer[26 + i] = RS485_Serial.read();
+    if (response_data_count > DATA_SIZE_BYTE) {
+      broadcast_to_return_error_package(239);  //Modbus data is received but its size is greater than the allowed limit
+      return;
+    } else if (response_data_count == 0) {
+      broadcast_to_return_error_package(139);  //There is no response is received by modbus slaves.
+      return;
+    }
+    request_package_buffer[26] = response_data_count;
+    for (uint8_t i = 0; i < request_package_buffer[26]; i++) {
+      request_package_buffer[27 + i] = RS485_Serial.read();
     }
     while (RS485_Serial.available()) RS485_Serial.read();
 
@@ -65,20 +102,23 @@ void listen_and_execute_valid_master_lora_orders() {
     uint8_t CRC_calculated_significant = CRC_calculated >> 8;
     uint8_t CRC_calculated_least = CRC_calculated % 256;
 
-    request_package_buffer[42] = CRC_calculated_least;
-    request_package_buffer[43] = CRC_calculated_significant;
+    request_package_buffer[PACKAGE_SIZE_BYTE - 2] = CRC_calculated_least;
+    request_package_buffer[PACKAGE_SIZE_BYTE - 1] = CRC_calculated_significant;
     //SEND RESPONSE
     digitalWrite(EBYTE_E32_M0_PIN, LOW);
     digitalWrite(EBYTE_E32_M1_PIN, LOW);
     delay(EBYTE_OPERATION_MODE_CHANGE_DELAY_MS);
     //Fixed broadcast
-    LoraSerial.write(request_package_buffer[4]);
     LoraSerial.write(request_package_buffer[5]);
+    LoraSerial.write(request_package_buffer[6]);
     LoraSerial.write(DEVICE_CHANNEL);
     //Data
     for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE; i++) {
       LoraSerial.write(request_package_buffer[i]);
     }
+  } else {
+    broadcast_to_return_error_package(86);  //Function code and Subfunction code does not match with any of the slave node methods
+    return;
   }
 }
 

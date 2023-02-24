@@ -38,7 +38,8 @@ void listen_and_execute_computer_orders() {
   if (package_buffer[3] == 1 && package_buffer[4] == 99) {
     package_buffer[26] = 1;
     package_buffer[27] = DEVICE_ADDRESS;
-    return_error_package(1);  //Greet computer
+    return_error_package(1);  //Greet computer  
+    return;
   }
 
   //(3.1)_________________
@@ -76,20 +77,22 @@ void listen_and_execute_computer_orders() {
     delay(LORA_REQUEST_WAIT_REPLY_TIME_MS);
 
     if (LoraSerial.available() == 0) {
-      if (DEBUG) Serial.println("No reply is received for process(" + String(uint16_t(package_buffer[0]) << 8 + package_buffer[1]) + ")");
+      if (DEBUG) Serial.println("No reply is received for process(" + String(package_buffer[1])+ "-" + String(package_buffer[2]) + ")");
       while (LoraSerial.available()) LoraSerial.read();
       return_error_package(89);  //No reply is received for process
+      return;
     } else if (LoraSerial.available() != PACKAGE_SIZE_BYTE) {
       if (DEBUG) Serial.println("Number of bytes received as reply do not match with package format -> received bytes:" + String(LoraSerial.available()) + "");
       while (LoraSerial.available()) LoraSerial.read();
       return_error_package(243);  //Number of bytes received as reply do not match with package format
+      return;
     }
 
     for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE; i++) {
       reply_package_buffer[i] = LoraSerial.read();
     }
 
-    if (DEBUG) Serial.println("Reply is received for process(" + String(uint16_t(package_buffer[0]) << 8 + package_buffer[1]) + ")");
+    if (DEBUG) Serial.println("Reply is received for process(" + String(package_buffer[1])+ "-" + String(package_buffer[2]) + ")");
     for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE - 1; i++) {
       Serial.print(String(reply_package_buffer[i]) + ",");
     }
@@ -99,7 +102,8 @@ void listen_and_execute_computer_orders() {
 
   //(3.x)_________________
   else{
-    return_error_package(0);
+    return_error_package(0); //Function code and Subfunction code does not match with any of the master node methods
+    return;
   }
 }
 

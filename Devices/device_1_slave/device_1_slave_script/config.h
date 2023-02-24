@@ -1,13 +1,13 @@
 //config for device_1_slave_script
 //PARAMETRIC VARIABLES
 #define DEBUG true
-#define EBYTE_PARAMETERS_DEBUG false
+#define EBYTE_PARAMETERS_DEBUG true
 #define LORA_WAIT_DATA_TRANSFER_MS 500
 #define RS485_REQUEST_WAIT_REPLY_TIME_MS 100
 #define EBYTE_OPERATION_MODE_CHANGE_DELAY_MS 50 //When MO & M1 pins of the EBYTE is changed, operation mode of the device also changed. In such a case, It takes time to recover from it. This parameter indicating that time
 
 //SOFTWARE RELATED STATIC VARIABLES
-#define PACKAGE_SIZE_BYTE 44
+#define PACKAGE_SIZE_BYTE 45
 #define DATA_SIZE_BYTE 16
 #define HARDWARE_SERIAL_BAUD_RATE 9600
 #define LORA_SOFTWARE_SERIAL_BAUD_RATE 9600
