@@ -1,31 +1,37 @@
-import modbus_devices.BQ225 as BQ225
 import serial_middleware
 import time 
+from devices.bq225 import BQ225
+from devices.master_lora import MasterLora
 
-
-def connect_to_master_device(SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):    
+def connect_to_master_device(MasterLoraInstance:MasterLora ,SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):    
     while(True):
         is_master_found = False
 
         for comport in SerialMiddlewareInstance.get_all_port_names():
-            if SerialMiddlewareInstance.is_blocked_port(comport):
-                if(DEBUG):print("Port is in blocked ports: " + comport)
-                time.sleep(1)
-            else: 
-                is_master_found = SerialMiddlewareInstance.connect(comport,DEBUG=DEBUG)
-                if(DEBUG):print("Connected to: " + comport)
-                SerialMiddlewareInstance.disconnect()
-                SerialMiddlewareInstance.add_to_blocked_ports(comport,DEBUG=DEBUG)
-                is_master_found = False
-        
-        SerialMiddlewareInstance.free_blocked_ports(DEBUG=DEBUG)
+
+            if not SerialMiddlewareInstance.is_blocked_port(comport):
+                if SerialMiddlewareInstance.connect(comport): 
+                    request = MasterLora.greet_request_str() #[${request_identifier}, ${request package as string}]
+                    SerialMiddlewareInstance.write_string_to_serial_utf8(string_to_write = request[1])
+                    response= SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request[0])
+                    if(MasterLora.is_valid_greeting_response(response = response)):
+                        is_master_found = True
+                        break           
+                else:
+                    SerialMiddlewareInstance.add_to_blocked_ports(comport)
+                    continue                         
+                                        
         if is_master_found:
-            if(DEBUG):print("Master found at port: " + comport)
+            if(DEBUG):print(time.strftime("%H:%M:%S", time.localtime()),"Master found at port: " + comport)
             break
+        else:
+            SerialMiddlewareInstance.free_blocked_ports()
 
 
+MasterLora = MasterLora(is_debugging = True)
+SerialMiddleware = serial_middleware.SerialMiddleware(is_debugging = True)
 
-SerialMiddlewareInstance = serial_middleware.SerialMiddleware()
 while(True):
-    connect_to_master_device(DEBUG = True, SerialMiddlewareInstance = SerialMiddlewareInstance)
-    pass
+    connect_to_master_device(DEBUG = True, SerialMiddlewareInstance = SerialMiddleware, MasterLoraInstance= MasterLora)
+    while(True):
+        time.sleep(1)

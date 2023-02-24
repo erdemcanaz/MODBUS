@@ -231,5 +231,5 @@ void return_error_package(uint8_t status_code) {
   for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE - 1; i++) {
     Serial.print(String(package_buffer[i]) + ",");
   }
-  Serial.println(package_buffer[PACKAGE_SIZE_BYTE]);
+  Serial.println(package_buffer[PACKAGE_SIZE_BYTE-1]);
 }

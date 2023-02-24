@@ -16,3 +16,10 @@ def calculate_crc_for_bytes_list(byte_list):
         crc_significant_byte = result_crc >> 8
         crc_least_byte = result_crc & 0xFF
         return [result_crc,crc_least_byte, crc_significant_byte]
+
+def convert_byte_list_to_string(byte_list):
+    text = ""
+    for i in range(0,len(byte_list)):
+        text += str(byte_list[i]) + ","
+    text = text[:-1] + "\n"
+    return text
