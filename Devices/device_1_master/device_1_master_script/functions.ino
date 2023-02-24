@@ -1,9 +1,8 @@
 //Functions for device_1_master_script
 uint8_t package_buffer[PACKAGE_SIZE_BYTE];
 
-void listen_and_execute_valid_computer_orders() {
+void listen_and_execute_computer_orders() {
   if (Serial.available() == 0) return;
-
 
   //(1)______________________________________________________________________________________________________________
   delay(HARDWARE_SERIAL_WAIT_COMPUTER_TRANSFER_MS);
@@ -17,7 +16,7 @@ void listen_and_execute_valid_computer_orders() {
 
 
   //(2)______________________________________________________________________________________________________________
-  bool is_received_byte_count_correct = received_byte_count == PACKAGE_SIZE_BYTE;
+  bool is_received_byte_count_correct = (received_byte_count == PACKAGE_SIZE_BYTE);
   bool is_received_CRC_correct = true;
 
   uint16_t CRC_calculated = calculate_CRC(true, 0, package_buffer[0]);
@@ -29,21 +28,21 @@ void listen_and_execute_valid_computer_orders() {
   if (!is_received_byte_count_correct || !is_received_CRC_correct) {
     if (DEBUG && !is_received_byte_count_correct) Serial.println("Received byte count is not enough, it is: " + String(received_byte_count));
     else if (DEBUG && !is_received_CRC_correct) Serial.println("Received CRC(lst-sig):" + String(package_buffer[PACKAGE_SIZE_BYTE - 2]) + "," + String(package_buffer[PACKAGE_SIZE_BYTE - 1]) + ". However True CRC(lst-sig):" + String((CRC_calculated % 256)) + "," + String((CRC_calculated >> 8)));
-      //TODO: computer data package is corrupted
-    Serial.println("STATUS-400");
+    return_error_package(43);  //Computer data package is corrupted
     return;
   }
-
 
   //(3)______________________________________________________________________________________________________________
 
   //(3.0)_________________
-  if (package_buffer[2] == 99 && package_buffer[3] == 0) {
-    Serial.println("Hi, As a master device, I am here to redirect your package. My address is:" + String(DEVICE_ADDRESS));
+  if (package_buffer[3] == 1 && package_buffer[4] == 99) {
+    package_buffer[26] = 1;
+    package_buffer[27] = DEVICE_ADDRESS;
+    return_error_package(1);  //Greet computer
   }
 
   //(3.1)_________________
-  else if (package_buffer[2] == 1 && package_buffer[3] == 0) {
+  else if (package_buffer[3] == 2 && package_buffer[4] == 0) {
     uint8_t reply_package_buffer[PACKAGE_SIZE_BYTE];
 
     //(3.1.0-SEND REQUEST)
@@ -52,19 +51,19 @@ void listen_and_execute_valid_computer_orders() {
       digitalWrite(EBYTE_E32_M1_PIN, LOW);
       delay(EBYTE_OPERATION_MODE_CHANGE_DELAY_MS);
     }
-    package_buffer[4] = DEVICE_ADDRESS >> 8;
-    package_buffer[5] = DEVICE_ADDRESS % 256;
+    package_buffer[5] = DEVICE_ADDRESS >> 8;   //Master lora address significant
+    package_buffer[6] = DEVICE_ADDRESS % 256;  //Master lora address least
 
     uint16_t CRC_calculated = calculate_CRC(true, 0, package_buffer[0]);
     for (uint8_t i = 1; i < PACKAGE_SIZE_BYTE - 2; i++) {
       CRC_calculated = calculate_CRC(false, CRC_calculated, package_buffer[i]);
     }
-    package_buffer[42] = CRC_calculated % 256;
-    package_buffer[43] = CRC_calculated >> 8;
+    package_buffer[PACKAGE_SIZE_BYTE - 2] = CRC_calculated % 256;
+    package_buffer[PACKAGE_SIZE_BYTE - 1] = CRC_calculated >> 8;
 
     //(3.1.0.0-fixed broadcast)
-    LoraSerial.write(package_buffer[6]);
     LoraSerial.write(package_buffer[7]);
+    LoraSerial.write(package_buffer[8]);
     LoraSerial.write(DEVICE_CHANNEL);
     //(3.1.0.1-package broadcast)
     for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE; i++) {
@@ -79,32 +78,28 @@ void listen_and_execute_valid_computer_orders() {
     if (LoraSerial.available() == 0) {
       if (DEBUG) Serial.println("No reply is received for process(" + String(uint16_t(package_buffer[0]) << 8 + package_buffer[1]) + ")");
       while (LoraSerial.available()) LoraSerial.read();
-      //TODO: No reply is received for process
-      Serial.println("STATUS-401");
-      return;
+      return_error_package(89);  //No reply is received for process
     } else if (LoraSerial.available() != PACKAGE_SIZE_BYTE) {
       if (DEBUG) Serial.println("Number of bytes received as reply do not match with package format -> received bytes:" + String(LoraSerial.available()) + "");
       while (LoraSerial.available()) LoraSerial.read();
-      //TODO: Number of bytes received as reply do not match with package format
-      Serial.println("STATUS-402");
-      return;
+      return_error_package(243);  //Number of bytes received as reply do not match with package format
     }
 
     for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE; i++) {
       reply_package_buffer[i] = LoraSerial.read();
     }
 
-    //Check whether process identifiers match
-    if (package_buffer[0] == reply_package_buffer[0] && package_buffer[1] == reply_package_buffer[1]) {
-      if (DEBUG) Serial.println("Reply is received for process(" + String(uint16_t(package_buffer[0]) << 8 + package_buffer[1]) + ")");
-      for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE - 1; i++) {
-        Serial.print(String(reply_package_buffer[i]) + ",");
-      }
-      Serial.println(reply_package_buffer[43]);
-    } else {
-      if (DEBUG) Serial.println("Reply is received but process identifiers do not match");
+    if (DEBUG) Serial.println("Reply is received for process(" + String(uint16_t(package_buffer[0]) << 8 + package_buffer[1]) + ")");
+    for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE - 1; i++) {
+      Serial.print(String(reply_package_buffer[i]) + ",");
     }
+    Serial.println(reply_package_buffer[PACKAGE_SIZE_BYTE - 1]);
     while (LoraSerial.available()) LoraSerial.read();
+  }
+
+  //(3.x)_________________
+  else{
+    return_error_package(0);
   }
 }
 
@@ -220,4 +215,17 @@ uint16_t calculate_CRC(bool is_first_data, uint16_t previously_calculated_crc, u
       new_byte = new_byte ^ key;
   }
   return new_byte;
+}
+
+void return_error_package(uint8_t status_code) {
+  package_buffer[0] = status_code;
+  uint16_t CRC_calculated = calculate_CRC(true, 0, package_buffer[0]);
+  for (uint8_t i = 1; i < PACKAGE_SIZE_BYTE - 2; i++) CRC_calculated = calculate_CRC(false, CRC_calculated, package_buffer[i]);
+  package_buffer[PACKAGE_SIZE_BYTE - 2] = CRC_calculated % 256;
+  package_buffer[PACKAGE_SIZE_BYTE - 1] = CRC_calculated >> 8;
+
+  for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE - 1; i++) {
+    Serial.print(String(package_buffer[i]) + ",");
+  }
+  Serial.println(package_buffer[PACKAGE_SIZE_BYTE]);
 }

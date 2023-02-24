@@ -12,5 +12,5 @@ void setup() {
 }
 
 void loop() {
-  listen_and_execute_valid_computer_orders();
+  listen_and_execute_computer_orders();
 }
