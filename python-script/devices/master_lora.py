@@ -18,7 +18,7 @@ class MasterLora():
         package_bytes[43] = crc_lst #crc least byte
         package_bytes[44] = crc_sig #crc significant byte
 
-        if(self.IS_DEBUGGING):print("MasterLora.greet_message() - package_bytes: " + str(package_bytes))
+        if(self.IS_DEBUGGING):print("Greet reqeust: " + str(package_bytes))
         return [process_identifier_16_bit, useful_methods.convert_byte_list_to_string(package_bytes)]
     
     def is_valid_greeting_response(self,response):
@@ -26,6 +26,7 @@ class MasterLora():
         package_bytes = response[1]
 
         if response_status != True:
+            if(self.IS_DEBUGGING):print("This reponse is not classified as master lora greetings " + str(response_status))
             return False
         
         if package_bytes[0] == 1 and package_bytes[3] == 1 and package_bytes[4] == 99:

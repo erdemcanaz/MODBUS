@@ -1,4 +1,4 @@
-import time
+import time,traceback
 #https://pyserial.readthedocs.io/en/latest/pyserial.html
 import serial, serial.tools.list_ports
 import useful_methods
@@ -18,12 +18,17 @@ class SerialMiddleware():
         "port_name is a string. Example: 'COM4' or '/dev/ttyUSB0'"
         try:
             if(self.IS_DEBUGGING):print(time.strftime("%H:%M:%S", time.localtime()),"Connecting to port: " + str(port_name))
+            if self.py_serial_instance.is_open:
+                self.py_serial_instance.close()
+                self.py_serial_instance.port = None    
+
             self.py_serial_instance.port = port_name
             self.py_serial_instance.open()
             if(self.IS_DEBUGGING):print(time.strftime("%H:%M:%S", time.localtime()),"Connected to port: " + str(port_name),"Waiting for Arduino to boot...")
             time.sleep(self.ARDUINO_BOOT_TIME_SECONDS)
             return True
         except serial.SerialException:
+            print(traceback.format_exc())
             if(self.IS_DEBUGGING):print(time.strftime("%H:%M:%S", time.localtime()),"Could not connect to port: " + str(port_name))
             if self.py_serial_instance.is_open:
                 self.py_serial_instance.close()
@@ -64,6 +69,30 @@ class SerialMiddleware():
     def write_string_to_serial_utf8(self, string_to_write = None):
         if(self.IS_DEBUGGING):print(time.strftime("%H:%M:%S", time.localtime()),"Writing to serial: " + str(string_to_write))
         self.py_serial_instance.write(string_to_write.encode()) 
+
+    def decorate_and_write_dict_to_serial_utf8(self, request_dict = None):
+        request_identifier = request_dict['request_identifier_16']
+        command_dict=request_dict['command_dict']
+        
+        if request_identifier == None or command_dict == None:raise Exception("request_identifier is None")
+        package_bytes = [0]*45
+        package_bytes[0]=255 #package status
+        package_bytes[1]= request_identifier >> 8 #request identifier significant byte
+        package_bytes[2]= request_identifier & 0xFF #request identifier least byte
+        package_bytes[3]= command_dict["function_code"] #function code
+        package_bytes[4]= command_dict["sub_function_code"] #sub function code
+        package_bytes[7]= command_dict["slave_lora_address"]>>8 #slave lora address significant byte
+        package_bytes[8]= command_dict["slave_lora_address"]&0xFF #slave lora address least byte
+        package_bytes[9]= command_dict["request_data_count"] #request data count
+        for i, byte in enumerate(command_dict["request_data_bytes"]):
+            package_bytes[10 +i] = byte
+
+        crc_16, crc_lst, crc_sig = useful_methods.calculate_crc_for_bytes_list(package_bytes[0:43])
+        package_bytes[43] = crc_lst #crc least byte
+        package_bytes[44] = crc_sig #crc significant byte
+
+        string_to_write = useful_methods.convert_byte_list_to_string(package_bytes)
+        self.py_serial_instance.write(string_to_write.encode())
 
     def read_package_from_serial_utf8(self, request_identifier=None):
         if(self.IS_DEBUGGING):print(time.strftime("%H:%M:%S", time.localtime()),"Reading from serial")

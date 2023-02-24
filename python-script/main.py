@@ -1,14 +1,17 @@
+import time,traceback
 import serial_middleware
-import time 
 from devices.bq225 import BQ225
 from devices.master_lora import MasterLora
 
+
 def connect_to_master_device(MasterLoraInstance:MasterLora ,SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):    
+    if(DEBUG):print(time.strftime("%H:%M:%S", time.localtime()),"Searching for master")
+
     while(True):
         is_master_found = False
 
         for comport in SerialMiddlewareInstance.get_all_port_names():
-
+            time.sleep(1)
             if not SerialMiddlewareInstance.is_blocked_port(comport):
                 if SerialMiddlewareInstance.connect(comport): 
                     request = MasterLora.greet_request_str() #[${request_identifier}, ${request package as string}]
@@ -26,12 +29,36 @@ def connect_to_master_device(MasterLoraInstance:MasterLora ,SerialMiddlewareInst
             break
         else:
             SerialMiddlewareInstance.free_blocked_ports()
+def get_BQ225_humidity(BQ225Instance:BQ225, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = BQ225Instance.humidity_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    BQ225Instance.is_valid_humidity_response(response = response)
+def get_BQ225_temperature(BQ225Instance:BQ225, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = BQ225Instance.temperature_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    BQ225Instance.is_valid_temperature_response(response = response)
 
 
-MasterLora = MasterLora(is_debugging = True)
-SerialMiddleware = serial_middleware.SerialMiddleware(is_debugging = True)
+
+#REAL DEVICES ########################################################################################################################
+MasterLora = MasterLora(is_debugging = False)
+BQ225_1 = BQ225(lora_address = 2, slave_address = 141, print_humidity = True, print_temperature= True)
+######################################################################################################################################
 
 while(True):
-    connect_to_master_device(DEBUG = True, SerialMiddlewareInstance = SerialMiddleware, MasterLoraInstance= MasterLora)
-    while(True):
-        time.sleep(1)
+    SerialMiddleware = serial_middleware.SerialMiddleware(is_debugging = False)
+
+    try:
+        #SETUP
+        connect_to_master_device(DEBUG = True, SerialMiddlewareInstance = SerialMiddleware, MasterLoraInstance= MasterLora)
+        
+        #LOOP
+        while(True):
+            get_BQ225_humidity(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            get_BQ225_temperature(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+
+    except Exception:
+        print(traceback.format_exc())
+        continue

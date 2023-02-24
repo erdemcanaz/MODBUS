@@ -3,7 +3,7 @@
 #define DEBUG false
 #define EBYTE_PARAMETERS_DEBUG false
 #define HARDWARE_SERIAL_WAIT_COMPUTER_TRANSFER_MS 10 //When hardware serial is not empty, It means there may be data transfer is in progress between master and the computer. This parameter indicates the absolute maximum time for that process to finish
-#define LORA_REQUEST_WAIT_REPLY_TIME_MS 3000  //When received package is broadcasted, It takes time to receive the broadcasted data. This parameter indicating that time
+#define LORA_REQUEST_WAIT_REPLY_TIME_MS 2000  //When received package is broadcasted, It takes time to receive the broadcasted data. This parameter indicating that time
 #define EBYTE_OPERATION_MODE_CHANGE_DELAY_MS 50 //When MO & M1 pins of the EBYTE is changed, operation mode of the device also changed. In such a case, It takes time to recover from it. This parameter indicating that time
 
 //SOFTWARE RELATED STATIC VARIABLES
