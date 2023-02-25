@@ -73,7 +73,6 @@ class SerialMiddleware():
     def decorate_and_write_dict_to_serial_utf8(self, request_dict = None):
         request_identifier = request_dict['request_identifier_16']
         command_dict=request_dict['command_dict']
-        
         if request_identifier == None or command_dict == None:raise Exception("request_identifier is None")
         package_bytes = [0]*45
         package_bytes[0]=255 #package status
@@ -92,6 +91,7 @@ class SerialMiddleware():
         package_bytes[44] = crc_sig #crc significant byte
 
         string_to_write = useful_methods.convert_byte_list_to_string(package_bytes)
+        if(self.IS_DEBUGGING):print(time.strftime("%H:%M:%S", time.localtime()),"Writing to serial: " + str(string_to_write))
         self.py_serial_instance.write(string_to_write.encode())
 
     def read_package_from_serial_utf8(self, request_identifier=None):
@@ -101,30 +101,49 @@ class SerialMiddleware():
        
         #(0) empty line
         if line =="":
-            return [400, None]
+            return [400, None, "Empty line or timeout occured"]
         
         #(1) byte count
         data_bytes_str = line.split(",")
         if len(data_bytes_str) != 45:
-            return [402,None]
+            return [402,None, "Number of bytes is not 45, but " + str(len(data_bytes_str)) + ""]
         
         #(2) bytes are integers
         data_bytes_int = []
         try:
             data_bytes_int = [int(byte_str) for byte_str in data_bytes_str]
         except:
-            return [403,None]
+            return [403,None, "Not all string bytes are integers"]
         
         #(3) Checksum
         crc_16, crc_lst, crc_sig = useful_methods.calculate_crc_for_bytes_list(data_bytes_int[0:43])
         if crc_lst != data_bytes_int[43] or crc_sig != data_bytes_int[44]:
-            return [401, None]
+            return [401, None, "Checksum is not valid" ]
         
         #(4) process identifier
         if request_identifier != (data_bytes_int[1]*256+ data_bytes_int[2]):
-            return [404, data_bytes_int]
+            return [404, data_bytes_int, "Request and reponse identifiers do not match"]
 
-        #return package 
-        return [True, data_bytes_int]
+        #(5) Arduino side errors
+        if data_bytes_int[0] != 255:        
+            error_dict = {
+                43: "Master lora receives corrupted package",
+                89: "Master lora receives no reply from slave lora. Either master lora cannot broadcast or slave lora is not responding",
+                243: "Master lora receives corrupted reply from slave lora",
+                207: "Slave lora receives corrupted package",
+                239: "Slave lora receives replies from slave devices connected to it. However, received number of bytes is not proper",
+                139:"Slave lora receives no reply from slave devices connected to it",
+                1:"Master lora greets the computer",
+                2:"Slave lora greets the computer",
+                0:"Master receives unknown function and sub function codes",
+                86:"Slave lora receives unknown function and sub function codes",   
+            }
+            if data_bytes_int[0] in error_dict:
+                return [data_bytes_int[0], data_bytes_int, error_dict[data_bytes_int[0]]]
+            else:
+                return [405, data_bytes_int, "Received status code is not defined"]
+           
+        else:
+            return [True, data_bytes_int, "Package is valid"]
       
 

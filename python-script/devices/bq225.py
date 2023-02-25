@@ -48,6 +48,8 @@ class BQ225():
         }
 
     def is_valid_humidity_response(self,response):
+        #TODO: validate CRC
+        if(self.IS_DEBUGGING):print(time.strftime("%H:%M:%S", time.localtime()),"is_valid_humidity_response: " + str(response[0])+"\n"+str(response[1])+"\n"+str(response[2]))
         response_status = response[0]
         package_bytes = response[1]
 
@@ -92,6 +94,8 @@ class BQ225():
         }
     
     def is_valid_temperature_response(self,response):
+        #TODO: validate CRC
+        if(self.IS_DEBUGGING):print(time.strftime("%H:%M:%S", time.localtime()),"is_valid_temperature_response: " + str(response[0])+"\n"+str(response[1])+"\n"+str(response[2]))
         response_status = response[0]
         package_bytes = response[1]
 

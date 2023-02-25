@@ -40,11 +40,9 @@ def get_BQ225_temperature(BQ225Instance:BQ225, SerialMiddlewareInstance:serial_m
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     BQ225Instance.is_valid_temperature_response(response = response)
 
-
-
 #REAL DEVICES ########################################################################################################################
-MasterLora = MasterLora(is_debugging = False)
-BQ225_1 = BQ225(lora_address = 2, slave_address = 141, print_humidity = True, print_temperature= True)
+MasterLora = MasterLora(is_debugging = True)
+BQ225_1 = BQ225(lora_address = 2, slave_address = 141,is_debugging=True, print_humidity = True, print_temperature= True)
 ######################################################################################################################################
 
 while(True):
