@@ -1,4 +1,4 @@
-20943956934117568
+20948989693900202
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -50554,12 +50554,33 @@ EBYTE-E32-433T20D
 7
 7
 Device_1_project_footprints
+lm281B-3000K
+
+
+0
+2
+2
+Device_1_project_footprints
+lm281B-6500K
+
+
+0
+2
+2
+Device_1_project_footprints
 output_vias
 
 
 0
+4
+4
+Device_1_project_footprints
+single_via
+
+
 0
-0
+1
+1
 Diode_SMD
 D_0201_0603Metric
 Diode SMD 0201 (0603 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: https://www.vishay.com/docs/20052/crcw0201e3.pdf), generated with kicad-footprint-generator
