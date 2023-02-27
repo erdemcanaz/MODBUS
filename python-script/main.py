@@ -1,6 +1,7 @@
 import time,traceback
 import serial_middleware
 from devices.bq225 import BQ225
+from devices.tescom_SDDPV2200M import Tescom_SDDPV2200M
 from devices.master_lora import MasterLora
 
 
@@ -40,9 +41,23 @@ def get_BQ225_temperature(BQ225Instance:BQ225, SerialMiddlewareInstance:serial_m
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     BQ225Instance.is_valid_temperature_response(response = response)
 
+def run_Tescom_SDDPV2200M_driver(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = Tescom_SDDPV2200MInstance.driver_run_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    Tescom_SDDPV2200MInstance.is_valid_driver_run_response(response = response)
+
+def stop_Tescom_SDDPV2200M_driver(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = Tescom_SDDPV2200MInstance.driver_stop_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    Tescom_SDDPV2200MInstance.is_valid_driver_stop_response(response = response)
+
 #REAL DEVICES ########################################################################################################################
-MasterLora = MasterLora(is_debugging = True)
-BQ225_1 = BQ225(lora_address = 2, slave_address = 141,is_debugging=True, print_humidity = True, print_temperature= True)
+MasterLora = MasterLora(is_debugging = False)
+BQ225_1 = BQ225(lora_address = 2, slave_address = 141,is_debugging=False, print_humidity = True, print_temperature= True)
+BQ225_2 = BQ225(lora_address = 3, slave_address = 141,is_debugging=True, print_humidity = True, print_temperature= True)
+Tescom_SDDPV2200M_1 = Tescom_SDDPV2200M(lora_address = 3, slave_address = 15,is_debugging=True)
 ######################################################################################################################################
 
 while(True):
@@ -54,9 +69,10 @@ while(True):
         
         #LOOP
         while(True):
-            get_BQ225_humidity(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
-            get_BQ225_temperature(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
-
+            get_BQ225_humidity(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            get_BQ225_temperature(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            get_BQ225_humidity(BQ225Instance = BQ225_2, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+    
     except Exception:
         print(traceback.format_exc())
         continue

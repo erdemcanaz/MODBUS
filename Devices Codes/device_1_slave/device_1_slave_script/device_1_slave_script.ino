@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-#include "config.h"
+#include "config_pcb.h"
 
 SoftwareSerial LoraSerial(EBYTE_E32_TX_PIN, EBYTE_E32_RX_PIN);  // software Rx, software Tx
 SoftwareSerial RS485_Serial(RS485_SOFTWARE_SERIAL_RX_PIN, RS485_SOFTWARE_SERIAL_TX_PIN);

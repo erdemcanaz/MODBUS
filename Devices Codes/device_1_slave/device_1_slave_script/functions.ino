@@ -62,6 +62,12 @@ void listen_and_execute_valid_master_lora_orders() {
   }
 
   //(3)______________________________________________________________________________________________________________
+  if(DEBUG){
+    Serial.print("Lora package received:" );
+    for(uint8_t i=0;i<PACKAGE_SIZE_BYTE;i++){
+      Serial.print(String(request_package_buffer[i])+", ");
+    }Serial.println();
+  }
   if (request_package_buffer[3] == 1 && request_package_buffer[4] == 98) {
     broadcast_to_return_error_package(2);  //greet_master
     return;
