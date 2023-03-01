@@ -69,8 +69,8 @@ while(True):
         
         #LOOP
         while(True):
-            get_BQ225_humidity(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-            get_BQ225_temperature(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            #get_BQ225_humidity(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            #get_BQ225_temperature(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
             get_BQ225_humidity(BQ225Instance = BQ225_2, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
     
     except Exception:

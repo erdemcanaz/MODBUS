@@ -73,8 +73,8 @@ void listen_and_execute_valid_master_lora_orders() {
     return;
   } else if (request_package_buffer[3] == 2 && request_package_buffer[4] == 0) {
 
-    if (!RS485_Serial.isListening()) RS485_Serial.listen();
-    while (RS485_Serial.available() > 0) RS485_Serial.read();
+    if (!RS485_Serial.isListening()) RS485_Serial.listen();  
+    while (RS485_Serial.available() > 0) RS485_Serial.read();  
 
     request_package_buffer[26] = 0;
     for (uint8_t i = 0; i < DATA_SIZE_BYTE; i++) request_package_buffer[27 + i] = 0;
@@ -84,8 +84,9 @@ void listen_and_execute_valid_master_lora_orders() {
       RS485_Serial.write(request_package_buffer[10 + i]);
     }
     digitalWrite(RS485_OUTPUT_ENABLE_PIN, LOW);
-
+    while (RS485_Serial.available() > 0) RS485_Serial.read();
     delay(RS485_REQUEST_WAIT_REPLY_TIME_MS);
+    
     uint8_t response_data_count = RS485_Serial.available();
 
     if (response_data_count > DATA_SIZE_BYTE) {

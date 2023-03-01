@@ -2319,7 +2319,7 @@
   (symbol (lib_id "MCU_Module:Arduino_Nano_v2.x") (at 255.27 58.42 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 72267a52-0e70-4b61-93d2-66c8206500b4)
-    (property "Reference" "ArduinoNano1" (id 0) (at 259.8294 83.82 0)
+    (property "Reference" "ArduinoNano" (id 0) (at 259.8294 83.82 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "Arduino_Nano_v2.x" (id 1) (at 255.524 66.04 90)
@@ -2875,7 +2875,7 @@
 
   (symbol_instances
     (path "/72267a52-0e70-4b61-93d2-66c8206500b4"
-      (reference "ArduinoNano1") (unit 1) (value "Arduino_Nano_v2.x") (footprint "Module:Arduino_Nano")
+      (reference "ArduinoNano") (unit 1) (value "Arduino_Nano_v2.x") (footprint "Module:Arduino_Nano")
     )
     (path "/7356581a-3789-4b61-83be-e3af5f89c2c2"
       (reference "C1") (unit 1) (value "47uF") (footprint "Capacitor_SMD:CP_Elec_6.3x5.2")
