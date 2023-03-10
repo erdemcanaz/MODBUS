@@ -12,12 +12,12 @@ void broadcast_to_return_error_package(uint8_t status_code) {
   uint8_t CRC_calculated_least = CRC_calculated % 256;
   request_package_buffer[PACKAGE_SIZE_BYTE - 2] = CRC_calculated_least;
   request_package_buffer[PACKAGE_SIZE_BYTE - 1] = CRC_calculated_significant;
-  
+
   //SEND RESPONSE
   if (digitalRead(EBYTE_E32_M0_PIN) || digitalRead(EBYTE_E32_M1_PIN)) {
     digitalWrite(EBYTE_E32_M0_PIN, LOW);
     digitalWrite(EBYTE_E32_M1_PIN, LOW);
-    delay(EBYTE_OPERATION_MODE_CHANGE_DELAY_MS);      
+    delay(EBYTE_OPERATION_MODE_CHANGE_DELAY_MS);
   }
   //Fixed broadcast
   LoraSerial.write(request_package_buffer[5]);
@@ -62,23 +62,31 @@ void listen_and_execute_valid_master_lora_orders() {
   }
 
   //(3)______________________________________________________________________________________________________________
-  if(DEBUG){
-    Serial.print("Lora package received:" );
-    for(uint8_t i=0;i<PACKAGE_SIZE_BYTE;i++){
-      Serial.print(String(request_package_buffer[i])+", ");
-    }Serial.println();
+  if (DEBUG) {
+    Serial.print("Lora package received:");
+    for (uint8_t i = 0; i < PACKAGE_SIZE_BYTE; i++) {
+      Serial.print(String(request_package_buffer[i]) + ", ");
+    }
+    Serial.println();
   }
   if (request_package_buffer[3] == 1 && request_package_buffer[4] == 98) {
     broadcast_to_return_error_package(2);  //greet_master
     return;
   } else if (request_package_buffer[3] == 2 && request_package_buffer[4] == 0) {
 
-    if (!RS485_Serial.isListening()) RS485_Serial.listen();  
-    while (RS485_Serial.available() > 0) RS485_Serial.read();  
+    if (!RS485_Serial.isListening()) RS485_Serial.listen();
+    while (RS485_Serial.available() > 0) RS485_Serial.read();
 
     request_package_buffer[26] = 0;
     for (uint8_t i = 0; i < DATA_SIZE_BYTE; i++) request_package_buffer[27 + i] = 0;
 
+    if (DEBUG) {
+      Serial.print("Request (rs485): ");
+      for (uint8_t i = 0; i < request_package_buffer[9]; i++) {
+        Serial.print(String(request_package_buffer[10 + i]) + ", ");
+      }
+      Serial.println();
+    }
     digitalWrite(RS485_OUTPUT_ENABLE_PIN, HIGH);
     for (uint8_t i = 0; i < request_package_buffer[9]; i++) {
       RS485_Serial.write(request_package_buffer[10 + i]);
@@ -86,9 +94,9 @@ void listen_and_execute_valid_master_lora_orders() {
     digitalWrite(RS485_OUTPUT_ENABLE_PIN, LOW);
     while (RS485_Serial.available() > 0) RS485_Serial.read();
     delay(RS485_REQUEST_WAIT_REPLY_TIME_MS);
-    
-    uint8_t response_data_count = RS485_Serial.available();
+    digitalWrite(RS485_OUTPUT_ENABLE_PIN, HIGH);
 
+    uint8_t response_data_count = RS485_Serial.available();  
     if (response_data_count > DATA_SIZE_BYTE) {
       broadcast_to_return_error_package(239);  //Modbus data is received but its size is greater than the allowed limit
       return;
@@ -96,11 +104,20 @@ void listen_and_execute_valid_master_lora_orders() {
       broadcast_to_return_error_package(139);  //There is no response is received by modbus slaves.
       return;
     }
+
     request_package_buffer[26] = response_data_count;
     for (uint8_t i = 0; i < request_package_buffer[26]; i++) {
       request_package_buffer[27 + i] = RS485_Serial.read();
     }
     while (RS485_Serial.available()) RS485_Serial.read();
+
+    if (DEBUG) {
+      Serial.print("Response (rs485):");
+      for (uint8_t i = 0; i < response_data_count; i++) {
+        Serial.print(String(request_package_buffer[27 + i]) + ", ");
+      }
+      Serial.println();
+    }
 
     uint16_t CRC_calculated = calculate_CRC(true, 0, request_package_buffer[0]);
     for (uint8_t i = 1; i < PACKAGE_SIZE_BYTE - 2; i++) {

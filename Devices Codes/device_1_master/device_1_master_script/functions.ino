@@ -233,3 +233,10 @@ void return_error_package(uint8_t status_code) {
   }
   Serial.println(package_buffer[PACKAGE_SIZE_BYTE-1]);
 }
+
+void configure_RS485_pins() {
+  pinMode(RS485_SOFTWARE_SERIAL_RX_PIN, INPUT);
+  pinMode(RS485_SOFTWARE_SERIAL_TX_PIN, OUTPUT);
+  pinMode(RS485_OUTPUT_ENABLE_PIN, OUTPUT);
+  digitalWrite(RS485_OUTPUT_ENABLE_PIN, LOW);
+}

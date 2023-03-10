@@ -103,9 +103,10 @@ class BQ225():
             if(self.IS_DEBUGGING):print("This reponse is not classified as temperature " + str(response_status))
             return False
         
-
         if package_bytes[0] == 255 and package_bytes[3] == 2 and package_bytes[4] == 0:
-            if package_bytes[26]==7 and package_bytes[27]==self.__slave_address and package_bytes[28]==3:
+            #TODO: remove 
+            print(package_bytes[26],package_bytes[27],package_bytes[28],package_bytes[29],package_bytes[30],package_bytes[31],package_bytes[32])
+            if True or package_bytes[26]==7 and package_bytes[27]==self.__slave_address and package_bytes[28]==3:
                 temperature_significant_byte = package_bytes[30]
                 temperature_least_byte = package_bytes[31]
                 temperature = temperature_significant_byte*256 + temperature_least_byte

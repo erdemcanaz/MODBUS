@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <design>
+    <source>C:\Users\Levovo20x\Documents\GitHub\MODBUS\Device PCBs\Device-1\Device-1.kicad_sch</source>
+    <date>3/4/2023 4:38:02 PM</date>
+    <tool>Eeschema (6.0.11)</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title>Device 1 Schematic</title>
+        <company>PowerLab</company>
+        <rev/>
+        <date>2023-02-25</date>
+        <source>Device-1.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="ArduinoNano1">
+      <value>Arduino_Nano_v2.x</value>
+      <footprint>Module:Arduino_Nano</footprint>
+      <datasheet>https://www.arduino.cc/en/uploads/Main/ArduinoNanoManual23.pdf</datasheet>
+      <libsource lib="MCU_Module" part="Arduino_Nano_v2.x" description="Arduino Nano v2.x"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>72267a52-0e70-4b61-93d2-66c8206500b4</tstamps>
+    </comp>
+    <comp ref="C1">
+      <value>47uF</value>
+      <footprint>Capacitor_SMD:CP_Elec_6.3x5.2</footprint>
+      <libsource lib="Device" part="C_Polarized" description="Polarized capacitor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7356581a-3789-4b61-83be-e3af5f89c2c2</tstamps>
+    </comp>
+    <comp ref="C2">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_1206_3216Metric</footprint>
+      <libsource lib="pspice" part="C" description="Capacitor symbol for simulation only"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>10a7ba56-9cea-4fcc-9927-eb4e718fc6b3</tstamps>
+    </comp>
+    <comp ref="D1">
+      <value>LED</value>
+      <footprint>Device_1_project_footprints:lm281B-3000K</footprint>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4e70ff9c-7c5c-4e2f-b63b-ac1aaa9d9253</tstamps>
+    </comp>
+    <comp ref="D2">
+      <value>LED</value>
+      <footprint>Device_1_project_footprints:lm281B-3000K</footprint>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c65b2ca3-4591-4b5b-aadc-e08b9474d67a</tstamps>
+    </comp>
+    <comp ref="D3">
+      <value>LED</value>
+      <footprint>Device_1_project_footprints:lm281B-3000K</footprint>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>baeee614-1264-407f-80b9-26ac22b06338</tstamps>
+    </comp>
+    <comp ref="D4">
+      <value>LED</value>
+      <footprint>Device_1_project_footprints:lm281B-6500K</footprint>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7c78e117-a47a-4b9f-8a17-116895fbe259</tstamps>
+    </comp>
+    <comp ref="D5">
+      <value>LED</value>
+      <footprint>Device_1_project_footprints:lm281B-6500K</footprint>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d82d9e5d-5144-4036-b7c7-5061d31169e2</tstamps>
+    </comp>
+    <comp ref="D6">
+      <value>LED</value>
+      <footprint>Device_1_project_footprints:lm281B-6500K</footprint>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ac5ae53b-5079-466a-a8b8-0fdc922497b9</tstamps>
+    </comp>
+    <comp ref="D7">
+      <value>LED</value>
+      <footprint>Device_1_project_footprints:lm281B-6500K</footprint>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f1c2a337-7cad-4af1-9c6f-70230fa2ee81</tstamps>
+    </comp>
+    <comp ref="D8">
+      <value>LED</value>
+      <footprint>Device_1_project_footprints:lm281B-3000K</footprint>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4a6bc78d-2062-44da-be06-61c76698d78f</tstamps>
+    </comp>
+    <comp ref="D9">
+      <value>LED</value>
+      <footprint>Device_1_project_footprints:lm281B-3000K</footprint>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>77056b37-9f90-49ad-96cd-ad1650b152f1</tstamps>
+    </comp>
+    <comp ref="J1">
+      <value>Conn_01x04_Female</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical</footprint>
+      <libsource lib="Connector" part="Conn_01x04_Female" description="Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2e2cdef3-d221-46c3-96bb-35bd60ef0027</tstamps>
+    </comp>
+    <comp ref="J2">
+      <value>Conn_01x04_Female</value>
+      <footprint>Device_1_project_footprints:output_vias</footprint>
+      <libsource lib="Connector" part="Conn_01x04_Female" description="Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4897caee-f680-4d16-969b-7506d8f8b91f</tstamps>
+    </comp>
+    <comp ref="R1">
+      <value>10k-PU</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ababefe4-93dd-4ef0-80c7-1b4dc99fb798</tstamps>
+    </comp>
+    <comp ref="R2">
+      <value>10k-PD</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>88ea9d9a-3b70-4132-9517-49e1054c140d</tstamps>
+    </comp>
+    <comp ref="R3">
+      <value>10k-PU</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4bb35230-c2e7-4002-a73b-b3720a4b4de8</tstamps>
+    </comp>
+    <comp ref="R4">
+      <value>20k-PD</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c1f9c4f8-b219-4cf4-ab1c-2c5729aed676</tstamps>
+    </comp>
+    <comp ref="R5">
+      <value>120</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>11bd84b1-7898-4b50-bdc5-b0c494072853</tstamps>
+    </comp>
+    <comp ref="R6">
+      <value>20k-PU</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>73ef84a6-fa13-46f4-a12b-a9bf8ee2afd1</tstamps>
+    </comp>
+    <comp ref="R7">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>04fd6b4e-54d1-4f4d-868f-0cc46c425a4c</tstamps>
+    </comp>
+    <comp ref="R8">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0a943acf-13ce-4453-9b61-7c87137f75b9</tstamps>
+    </comp>
+    <comp ref="R9">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ef25db47-e1fa-4de0-9491-7451bb408c18</tstamps>
+    </comp>
+    <comp ref="R10">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>262e6eec-752f-4df2-bb26-60d7ca2f6464</tstamps>
+    </comp>
+    <comp ref="R11">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>64cce32e-345c-4555-a948-63b98cec1a2e</tstamps>
+    </comp>
+    <comp ref="R12">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>37523fee-61f5-4c42-a51b-8d090da961e4</tstamps>
+    </comp>
+    <comp ref="R13">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a5229ae0-43aa-4126-9715-8d406258ce90</tstamps>
+    </comp>
+    <comp ref="R14">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6ad1910e-eba6-48de-9efa-d006afe714f5</tstamps>
+    </comp>
+    <comp ref="R15">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a1c6dde8-1ee8-4183-bd99-b6c454b7f6c6</tstamps>
+    </comp>
+    <comp ref="R16">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e8ab1eab-ea16-4d2c-a674-f53ebe0de364</tstamps>
+    </comp>
+    <comp ref="R17">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>20038aed-8b51-4cde-8284-4a47a1e4b8a7</tstamps>
+    </comp>
+    <comp ref="R18">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>bc7f0aa3-e429-4eca-bf37-84d35282bffe</tstamps>
+    </comp>
+    <comp ref="U1">
+      <value>EBYTE_E32-433T20D</value>
+      <footprint>Device_1_project_footprints:EBYTE-E32-433T20D</footprint>
+      <libsource lib="device_1_project_symbols" part="EBYTE_E32-433T20D" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4b2fe800-2e75-48c0-bd87-5feef54a0a17</tstamps>
+    </comp>
+    <comp ref="U2">
+      <value>MAX487E</value>
+      <footprint>Package_DIP:DIP-8_W7.62mm</footprint>
+      <datasheet>https://datasheets.maximintegrated.com/en/ds/MAX1487E-MAX491E.pdf</datasheet>
+      <libsource lib="Interface_UART" part="MAX487E" description="Half duplex RS-485/RS-422, 0.25 Mbps, ±15kV electro-static discharge (ESD) protection, with slew-rate, with low-power shutdown, with receiver/driver enable, 128 receiver drive kapacitity, DIP-8 and SOIC-8"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c1f6a2b3-80e3-4784-b9a0-fbf7bfa47805</tstamps>
+    </comp>
+    <comp ref="U3">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4fd92d82-8261-481b-bc7c-7b5cf55369de</tstamps>
+    </comp>
+    <comp ref="U4">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>90905ac4-4126-4e95-8091-ee7bb05e37d8</tstamps>
+    </comp>
+    <comp ref="U5">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>434c2f00-c199-473e-ac35-031bf4faca8d</tstamps>
+    </comp>
+    <comp ref="U6">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>cd4f926b-1725-4ee3-8911-9a66a67388b2</tstamps>
+    </comp>
+    <comp ref="U7">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f78fb205-3e93-43d7-a8a0-ac414611ecf5</tstamps>
+    </comp>
+    <comp ref="U8">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ae450174-c8ee-4182-93c7-4393c8d39a20</tstamps>
+    </comp>
+    <comp ref="U9">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a64d6ee1-f9f5-45f7-be54-5d191ea9cc7b</tstamps>
+    </comp>
+    <comp ref="U10">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b9f353ba-ae88-495e-94c2-1bf2aae4d86a</tstamps>
+    </comp>
+    <comp ref="U11">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>532eedd7-c13d-4ad6-be44-d27d849876ee</tstamps>
+    </comp>
+    <comp ref="U12">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5a432d7d-f444-4f14-9443-33b9b6c86e69</tstamps>
+    </comp>
+    <comp ref="U13">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1eb93e27-38db-4235-bbc2-4c348d2a5692</tstamps>
+    </comp>
+    <comp ref="U14">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9133f181-cbda-4046-a6b1-e4722fa296a9</tstamps>
+    </comp>
+    <comp ref="U15">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2b524e79-169c-4bcb-b4dd-a0199b9f037a</tstamps>
+    </comp>
+    <comp ref="U16">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>67233691-aa8b-41f7-871a-8789b2afac27</tstamps>
+    </comp>
+    <comp ref="U17">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>dea58706-9f2d-4f55-8715-023342726f71</tstamps>
+    </comp>
+    <comp ref="U18">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>52e4a285-00f3-4676-b37d-6eca2f31c23f</tstamps>
+    </comp>
+    <comp ref="U19">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3fa58e63-832f-4415-b919-8b6cf096d1b0</tstamps>
+    </comp>
+    <comp ref="U20">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ce7b0a7c-f850-4652-8ad6-fc83ec019307</tstamps>
+    </comp>
+    <comp ref="U21">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1092a2bd-626c-4040-afc6-f1f397dca209</tstamps>
+    </comp>
+    <comp ref="U22">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9fdb271b-221e-4418-9834-f4053e12ba39</tstamps>
+    </comp>
+    <comp ref="U23">
+      <value>signle_via</value>
+      <footprint>Device_1_project_footprints:single_via</footprint>
+      <libsource lib="device_1_project_symbols" part="signle_via" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Device-1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d22dba1a-6280-4a70-8036-58f32020cf79</tstamps>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Connector" part="Conn_01x04_Female">
+      <description>Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x04_Female</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="C_Polarized">
+      <description>Polarized capacitor</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>CP_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C_Polarized</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="LED">
+      <description>Light emitting diode</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>LED*</fp>
+        <fp>LED_SMD:*</fp>
+        <fp>LED_THT:*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">LED</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="R">
+      <description>Resistor</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>R_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Interface_UART" part="MAX487E">
+      <description>Half duplex RS-485/RS-422, 0.25 Mbps, ±15kV electro-static discharge (ESD) protection, with slew-rate, with low-power shutdown, with receiver/driver enable, 128 receiver drive kapacitity, DIP-8 and SOIC-8</description>
+      <docs>https://datasheets.maximintegrated.com/en/ds/MAX1487E-MAX491E.pdf</docs>
+      <footprints>
+        <fp>DIP*W7.62mm*</fp>
+        <fp>SOIC*3.9x4.9mm*P1.27mm*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">MAX487E</field>
+        <field name="Datasheet">https://datasheets.maximintegrated.com/en/ds/MAX1487E-MAX491E.pdf</field>
+      </fields>
+      <pins>
+        <pin num="1" name="RO" type="output"/>
+        <pin num="2" name="~{RE}" type="input"/>
+        <pin num="3" name="DE" type="input"/>
+        <pin num="4" name="DI" type="input"/>
+        <pin num="5" name="GND" type="power_in"/>
+        <pin num="6" name="A" type="bidirectional"/>
+        <pin num="7" name="B" type="bidirectional"/>
+        <pin num="8" name="VCC" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="MCU_Module" part="Arduino_Nano_v2.x">
+      <description>Arduino Nano v2.x</description>
+      <docs>https://www.arduino.cc/en/uploads/Main/ArduinoNanoManual23.pdf</docs>
+      <footprints>
+        <fp>Arduino*Nano*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">A</field>
+        <field name="Value">Arduino_Nano_v2.x</field>
+        <field name="Footprint">Module:Arduino_Nano</field>
+        <field name="Datasheet">https://www.arduino.cc/en/uploads/Main/ArduinoNanoManual23.pdf</field>
+      </fields>
+      <pins>
+        <pin num="1" name="D1/TX" type="bidirectional"/>
+        <pin num="2" name="D0/RX" type="bidirectional"/>
+        <pin num="3" name="~{RESET}" type="input"/>
+        <pin num="4" name="GND" type="power_in"/>
+        <pin num="5" name="D2" type="bidirectional"/>
+        <pin num="6" name="D3" type="bidirectional"/>
+        <pin num="7" name="D4" type="bidirectional"/>
+        <pin num="8" name="D5" type="bidirectional"/>
+        <pin num="9" name="D6" type="bidirectional"/>
+        <pin num="10" name="D7" type="bidirectional"/>
+        <pin num="11" name="D8" type="bidirectional"/>
+        <pin num="12" name="D9" type="bidirectional"/>
+        <pin num="13" name="D10" type="bidirectional"/>
+        <pin num="14" name="D11" type="bidirectional"/>
+        <pin num="15" name="D12" type="bidirectional"/>
+        <pin num="16" name="D13" type="bidirectional"/>
+        <pin num="17" name="3V3" type="power_out"/>
+        <pin num="18" name="AREF" type="input"/>
+        <pin num="19" name="A0" type="bidirectional"/>
+        <pin num="20" name="A1" type="bidirectional"/>
+        <pin num="21" name="A2" type="bidirectional"/>
+        <pin num="22" name="A3" type="bidirectional"/>
+        <pin num="23" name="A4" type="bidirectional"/>
+        <pin num="24" name="A5" type="bidirectional"/>
+        <pin num="25" name="A6" type="bidirectional"/>
+        <pin num="26" name="A7" type="bidirectional"/>
+        <pin num="27" name="+5V" type="power_out"/>
+        <pin num="28" name="~{RESET}" type="input"/>
+        <pin num="29" name="GND" type="power_in"/>
+        <pin num="30" name="VIN" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="device_1_project_symbols" part="EBYTE_E32-433T20D">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">EBYTE_E32-433T20D</field>
+      </fields>
+      <pins>
+        <pin num="1" name="M0" type="input"/>
+        <pin num="2" name="M1" type="input"/>
+        <pin num="3" name="RX" type="input"/>
+        <pin num="4" name="TX" type="input"/>
+        <pin num="5" name="AUX" type="input"/>
+        <pin num="6" name="Vcc" type="input"/>
+        <pin num="7" name="GND" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="device_1_project_symbols" part="signle_via">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">signle_via</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Via" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="pspice" part="C">
+      <description>Capacitor symbol for simulation only</description>
+      <docs>~</docs>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connector">
+      <uri>C:\Program Files\KiCad\6.0\share\kicad\symbols\/Connector.kicad_sym</uri>
+    </library>
+    <library logical="Device">
+      <uri>C:\Program Files\KiCad\6.0\share\kicad\symbols\/Device.kicad_sym</uri>
+    </library>
+    <library logical="Interface_UART">
+      <uri>C:\Program Files\KiCad\6.0\share\kicad\symbols\/Interface_UART.kicad_sym</uri>
+    </library>
+    <library logical="MCU_Module">
+      <uri>C:\Program Files\KiCad\6.0\share\kicad\symbols\/MCU_Module.kicad_sym</uri>
+    </library>
+    <library logical="device_1_project_symbols">
+      <uri>C:\Users\Levovo20x\Documents\GitHub\MODBUS\Device PCBs\Device-1/device_1_project_symbols.kicad_sym</uri>
+    </library>
+    <library logical="pspice">
+      <uri>C:\Program Files\KiCad\6.0\share\kicad\symbols\/pspice.kicad_sym</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="5V">
+      <node ref="ArduinoNano1" pin="27" pinfunction="+5V" pintype="power_out"/>
+      <node ref="C1" pin="1" pintype="passive"/>
+      <node ref="C2" pin="1" pintype="passive"/>
+      <node ref="D1" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="J1" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="J2" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="R1" pin="1" pintype="passive"/>
+      <node ref="R3" pin="1" pintype="passive"/>
+      <node ref="R6" pin="2" pintype="passive"/>
+      <node ref="U1" pin="6" pinfunction="Vcc" pintype="input"/>
+      <node ref="U2" pin="8" pinfunction="VCC" pintype="power_in"/>
+      <node ref="U20" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="2" name="A">
+      <node ref="J1" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="J2" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="R5" pin="2" pintype="passive"/>
+      <node ref="R6" pin="1" pintype="passive"/>
+      <node ref="U2" pin="6" pinfunction="A" pintype="bidirectional"/>
+    </net>
+    <net code="3" name="B">
+      <node ref="J1" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="J2" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="R4" pin="2" pintype="passive"/>
+      <node ref="R5" pin="1" pintype="passive"/>
+      <node ref="U2" pin="7" pinfunction="B" pintype="bidirectional"/>
+    </net>
+    <net code="4" name="EBYTE_AUX">
+      <node ref="ArduinoNano1" pin="5" pinfunction="D2" pintype="bidirectional"/>
+      <node ref="D2" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="U1" pin="5" pinfunction="AUX" pintype="input"/>
+    </net>
+    <net code="5" name="EBYTE_RX">
+      <node ref="R16" pin="2" pintype="passive"/>
+      <node ref="U1" pin="3" pinfunction="RX" pintype="input"/>
+    </net>
+    <net code="6" name="EBYTE_TX">
+      <node ref="ArduinoNano1" pin="6" pinfunction="D3" pintype="bidirectional"/>
+      <node ref="D4" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="U1" pin="4" pinfunction="TX" pintype="input"/>
+    </net>
+    <net code="7" name="GND">
+      <node ref="ArduinoNano1" pin="4" pinfunction="GND" pintype="power_in"/>
+      <node ref="C1" pin="2" pintype="passive"/>
+      <node ref="C2" pin="2" pintype="passive"/>
+      <node ref="J1" pin="3" pinfunction="Pin_3" pintype="passive"/>
+      <node ref="J2" pin="3" pinfunction="Pin_3" pintype="passive"/>
+      <node ref="R10" pin="2" pintype="passive"/>
+      <node ref="R11" pin="2" pintype="passive"/>
+      <node ref="R12" pin="2" pintype="passive"/>
+      <node ref="R13" pin="2" pintype="passive"/>
+      <node ref="R14" pin="2" pintype="passive"/>
+      <node ref="R15" pin="2" pintype="passive"/>
+      <node ref="R2" pin="1" pintype="passive"/>
+      <node ref="R4" pin="1" pintype="passive"/>
+      <node ref="R7" pin="2" pintype="passive"/>
+      <node ref="R8" pin="2" pintype="passive"/>
+      <node ref="R9" pin="2" pintype="passive"/>
+      <node ref="U1" pin="7" pinfunction="GND" pintype="input"/>
+      <node ref="U2" pin="5" pinfunction="GND" pintype="power_in"/>
+    </net>
+    <net code="8" name="M0">
+      <node ref="R18" pin="2" pintype="passive"/>
+      <node ref="U1" pin="1" pinfunction="M0" pintype="input"/>
+    </net>
+    <net code="9" name="M1">
+      <node ref="R17" pin="2" pintype="passive"/>
+      <node ref="U1" pin="2" pinfunction="M1" pintype="input"/>
+    </net>
+    <net code="10" name="Net-(ArduinoNano1-Pad1)">
+      <node ref="ArduinoNano1" pin="1" pinfunction="D1/TX" pintype="bidirectional"/>
+      <node ref="U22" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="11" name="Net-(ArduinoNano1-Pad2)">
+      <node ref="ArduinoNano1" pin="2" pinfunction="D0/RX" pintype="bidirectional"/>
+      <node ref="U23" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="12" name="Net-(ArduinoNano1-Pad3)">
+      <node ref="ArduinoNano1" pin="3" pinfunction="~{RESET}" pintype="input"/>
+      <node ref="U9" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="13" name="Net-(ArduinoNano1-Pad7)">
+      <node ref="ArduinoNano1" pin="7" pinfunction="D4" pintype="bidirectional"/>
+      <node ref="D6" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R16" pin="1" pintype="passive"/>
+    </net>
+    <net code="14" name="Net-(ArduinoNano1-Pad8)">
+      <node ref="ArduinoNano1" pin="8" pinfunction="D5" pintype="bidirectional"/>
+      <node ref="D8" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R17" pin="1" pintype="passive"/>
+    </net>
+    <net code="15" name="Net-(ArduinoNano1-Pad9)">
+      <node ref="ArduinoNano1" pin="9" pinfunction="D6" pintype="bidirectional"/>
+      <node ref="D9" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R18" pin="1" pintype="passive"/>
+    </net>
+    <net code="16" name="Net-(ArduinoNano1-Pad13)">
+      <node ref="ArduinoNano1" pin="13" pinfunction="D10" pintype="bidirectional"/>
+      <node ref="U3" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="17" name="Net-(ArduinoNano1-Pad14)">
+      <node ref="ArduinoNano1" pin="14" pinfunction="D11" pintype="bidirectional"/>
+      <node ref="U4" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="18" name="Net-(ArduinoNano1-Pad15)">
+      <node ref="ArduinoNano1" pin="15" pinfunction="D12" pintype="bidirectional"/>
+      <node ref="U5" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="19" name="Net-(ArduinoNano1-Pad16)">
+      <node ref="ArduinoNano1" pin="16" pinfunction="D13" pintype="bidirectional"/>
+      <node ref="U6" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="20" name="Net-(ArduinoNano1-Pad17)">
+      <node ref="ArduinoNano1" pin="17" pinfunction="3V3" pintype="power_out"/>
+      <node ref="U21" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="21" name="Net-(ArduinoNano1-Pad18)">
+      <node ref="ArduinoNano1" pin="18" pinfunction="AREF" pintype="input"/>
+      <node ref="U10" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="22" name="Net-(ArduinoNano1-Pad19)">
+      <node ref="ArduinoNano1" pin="19" pinfunction="A0" pintype="bidirectional"/>
+      <node ref="U11" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="23" name="Net-(ArduinoNano1-Pad20)">
+      <node ref="ArduinoNano1" pin="20" pinfunction="A1" pintype="bidirectional"/>
+      <node ref="U12" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="24" name="Net-(ArduinoNano1-Pad21)">
+      <node ref="ArduinoNano1" pin="21" pinfunction="A2" pintype="bidirectional"/>
+      <node ref="U13" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="25" name="Net-(ArduinoNano1-Pad22)">
+      <node ref="ArduinoNano1" pin="22" pinfunction="A3" pintype="bidirectional"/>
+      <node ref="U14" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="26" name="Net-(ArduinoNano1-Pad23)">
+      <node ref="ArduinoNano1" pin="23" pinfunction="A4" pintype="bidirectional"/>
+      <node ref="U15" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="27" name="Net-(ArduinoNano1-Pad24)">
+      <node ref="ArduinoNano1" pin="24" pinfunction="A5" pintype="bidirectional"/>
+      <node ref="U16" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="28" name="Net-(ArduinoNano1-Pad25)">
+      <node ref="ArduinoNano1" pin="25" pinfunction="A6" pintype="bidirectional"/>
+      <node ref="U17" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="29" name="Net-(ArduinoNano1-Pad26)">
+      <node ref="ArduinoNano1" pin="26" pinfunction="A7" pintype="bidirectional"/>
+      <node ref="U18" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="30" name="Net-(ArduinoNano1-Pad28)">
+      <node ref="ArduinoNano1" pin="28" pinfunction="~{RESET}" pintype="input"/>
+      <node ref="U8" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="31" name="Net-(ArduinoNano1-Pad29)">
+      <node ref="ArduinoNano1" pin="29" pinfunction="GND" pintype="power_in"/>
+      <node ref="U7" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="32" name="Net-(ArduinoNano1-Pad30)">
+      <node ref="ArduinoNano1" pin="30" pinfunction="VIN" pintype="power_in"/>
+      <node ref="U19" pin="1" pinfunction="Via" pintype="input"/>
+    </net>
+    <net code="33" name="Net-(D1-Pad1)">
+      <node ref="D1" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="R7" pin="1" pintype="passive"/>
+    </net>
+    <net code="34" name="Net-(D2-Pad1)">
+      <node ref="D2" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="R8" pin="1" pintype="passive"/>
+    </net>
+    <net code="35" name="Net-(D3-Pad1)">
+      <node ref="D3" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="R9" pin="1" pintype="passive"/>
+    </net>
+    <net code="36" name="Net-(D4-Pad1)">
+      <node ref="D4" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="R10" pin="1" pintype="passive"/>
+    </net>
+    <net code="37" name="Net-(D5-Pad1)">
+      <node ref="D5" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="R11" pin="1" pintype="passive"/>
+    </net>
+    <net code="38" name="Net-(D6-Pad1)">
+      <node ref="D6" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="R12" pin="1" pintype="passive"/>
+    </net>
+    <net code="39" name="Net-(D7-Pad1)">
+      <node ref="D7" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="R13" pin="1" pintype="passive"/>
+    </net>
+    <net code="40" name="Net-(D8-Pad1)">
+      <node ref="D8" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="R14" pin="1" pintype="passive"/>
+    </net>
+    <net code="41" name="Net-(D9-Pad1)">
+      <node ref="D9" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="R15" pin="1" pintype="passive"/>
+    </net>
+    <net code="42" name="RS485_OUTPUT_ENABLE_PIN">
+      <node ref="ArduinoNano1" pin="12" pinfunction="D9" pintype="bidirectional"/>
+      <node ref="D3" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R2" pin="2" pintype="passive"/>
+      <node ref="U2" pin="2" pinfunction="~{RE}" pintype="input"/>
+      <node ref="U2" pin="3" pinfunction="DE" pintype="input"/>
+    </net>
+    <net code="43" name="RS485_SS_RX_PIN">
+      <node ref="ArduinoNano1" pin="10" pinfunction="D7" pintype="bidirectional"/>
+      <node ref="D7" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R3" pin="2" pintype="passive"/>
+      <node ref="U2" pin="1" pinfunction="RO" pintype="output"/>
+    </net>
+    <net code="44" name="RS485_SS_TX_PIN">
+      <node ref="ArduinoNano1" pin="11" pinfunction="D8" pintype="bidirectional"/>
+      <node ref="D5" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R1" pin="2" pintype="passive"/>
+      <node ref="U2" pin="4" pinfunction="DI" pintype="input"/>
+    </net>
+  </nets>
+</export>
