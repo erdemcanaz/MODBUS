@@ -2,6 +2,7 @@ import time,traceback
 import serial_middleware
 from devices.bq225 import BQ225
 from devices.tescom_SDDPV2200M import Tescom_SDDPV2200M
+from devices.growatt_SPF5000ES import Growatt_SPF5000ES
 from devices.master_lora import MasterLora
 
 
@@ -12,6 +13,7 @@ def connect_to_master_device(MasterLoraInstance:MasterLora ,SerialMiddlewareInst
         is_master_found = False
 
         for comport in SerialMiddlewareInstance.get_all_port_names():
+            print(comport)
             time.sleep(1)
             if not SerialMiddlewareInstance.is_blocked_port(comport):
                 if SerialMiddlewareInstance.connect(comport): 
@@ -53,12 +55,30 @@ def stop_Tescom_SDDPV2200M_driver(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, S
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     Tescom_SDDPV2200MInstance.is_valid_driver_stop_response(response = response)
 
+def get_inverter_BESS_voltage(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = Growatt_SPF5000ESInstance.BESS_voltage_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    Growatt_SPF5000ESInstance.is_valid_BESS_voltage_response(response = response)
+
+def get_inverter_load_power(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = Growatt_SPF5000ESInstance.load_power_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    Growatt_SPF5000ESInstance.is_valid_load_power_response(response = response)
+
+def get_inverter_pv_power(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = Growatt_SPF5000ESInstance.pv_power_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    Growatt_SPF5000ESInstance.is_valid_pv_power_response(response = response)
+
 #REAL DEVICES ########################################################################################################################
 MasterLora = MasterLora(is_debugging = False)
 BQ225_1 = BQ225(lora_address = 3, slave_address = 141,is_debugging=True, print_humidity = True, print_temperature= True)
 BQ225_2 = BQ225(lora_address = 4, slave_address = 141,is_debugging=True, print_humidity = True, print_temperature= True)
 BQ225_3 = BQ225(lora_address = 5, slave_address = 141,is_debugging=True, print_humidity = True, print_temperature= True)
-
+Inverter = Growatt_SPF5000ES(lora_address = 3, slave_address = 16,is_debugging=True , print_BESS_voltage = True, print_load_power= True, print_pv_power= True)
 
 Tescom_SDDPV2200M_1 = Tescom_SDDPV2200M(lora_address = 3, slave_address = 15,is_debugging=True)
 ######################################################################################################################################
@@ -72,13 +92,15 @@ while(True):
         
         #LOOP
         while(True):
-            #get_BQ225_humidity(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-            get_BQ225_temperature(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
-            get_BQ225_temperature(BQ225Instance = BQ225_2, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            #get_BQ225_temperature(BQ225Instance = BQ225_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            #get_BQ225_temperature(BQ225Instance = BQ225_2, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            
             get_BQ225_temperature(BQ225Instance = BQ225_3, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
-
-            time.sleep(1)
+            get_BQ225_humidity(BQ225Instance = BQ225_3, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
     
+            get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = Inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            get_inverter_load_power(Growatt_SPF5000ESInstance = Inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            get_inverter_pv_power(Growatt_SPF5000ESInstance = Inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
     except Exception:
         print(traceback.format_exc())
         continue
