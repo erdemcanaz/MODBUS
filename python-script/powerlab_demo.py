@@ -51,7 +51,11 @@ def get_inverter_BESS_voltage(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, Seria
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     Growatt_SPF5000ESInstance.is_valid_BESS_voltage_response(response = response)
-
+def get_inverter_load_power(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = Growatt_SPF5000ESInstance.load_power_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    Growatt_SPF5000ESInstance.is_valid_load_power_response(response = response)
 
 #Setup
 MasterLora = MasterLora(is_debugging = False)
@@ -61,3 +65,4 @@ connect_to_master_device(DEBUG = True, SerialMiddlewareInstance = SerialMiddlewa
 while True:
     get_BQ225_temperature(BQ225Instance = ayasli_sensor, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
     get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_lab_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+    get_inverter_load_power(Growatt_SPF5000ESInstance = machine_lab_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)

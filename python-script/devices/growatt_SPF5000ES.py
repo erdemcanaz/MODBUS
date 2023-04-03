@@ -112,7 +112,7 @@ class Growatt_SPF5000ES():
                 load_power_significant_byte = package_bytes[30]
                 load_power_least_byte = package_bytes[31]
                 load_power = load_power_significant_byte*256 + load_power_least_byte
-                self.__load_power = load_power/100
+                self.__load_power = load_power/10
                 if(self.PRINT_LOAD_POWER):print(time.strftime("%H:%M:%S", time.localtime()),"Load Power (W):".ljust(40,"-"),self.__load_power)
                 return True
             else:
