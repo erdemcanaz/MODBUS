@@ -20,8 +20,6 @@ class Growatt_SPF5000ES():
         self.PRINT_LOAD_POWER = print_load_power
         self.PRINT_PV_POWER = print_pv_power
 
-        
-        
     def get_slave_address(self):
         return self.__slave_address
  
