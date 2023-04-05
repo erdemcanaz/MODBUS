@@ -1,5 +1,5 @@
-uint16_t holding_registers[NUMBER_OF_HOLDING_REGISTERS];
-uint16_t input_registers[NUMBER_OF_INPUT_REGISTERS];
+//uint16_t holding_registers[NUMBER_OF_HOLDING_REGISTERS];
+//uint16_t input_registers[NUMBER_OF_INPUT_REGISTERS];
 
 uint8_t B[32];//bytes buffer
 
