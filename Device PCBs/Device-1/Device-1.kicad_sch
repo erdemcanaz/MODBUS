@@ -2422,7 +2422,7 @@
     (property "Reference" "R6" (id 0) (at 90.932 82.931 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "20k-PU" (id 1) (at 89.027 84.201 90)
+    (property "Value" "1k-PU" (id 1) (at 89.027 84.201 90)
       (effects (font (size 0.67 0.67)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_1206_3216Metric" (id 2) (at 87.249 82.296 90)
@@ -2743,7 +2743,7 @@
     (property "Reference" "R4" (id 0) (at 90.932 66.421 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "20k-PD" (id 1) (at 89.027 67.691 90)
+    (property "Value" "1k-PD" (id 1) (at 89.027 67.691 90)
       (effects (font (size 0.67 0.67)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_1206_3216Metric" (id 2) (at 87.249 65.786 90)
@@ -2998,13 +2998,13 @@
       (reference "R3") (unit 1) (value "10k-PU") (footprint "Resistor_SMD:R_1206_3216Metric")
     )
     (path "/c1f9c4f8-b219-4cf4-ab1c-2c5729aed676"
-      (reference "R4") (unit 1) (value "20k-PD") (footprint "Resistor_SMD:R_1206_3216Metric")
+      (reference "R4") (unit 1) (value "1k-PD") (footprint "Resistor_SMD:R_1206_3216Metric")
     )
     (path "/11bd84b1-7898-4b50-bdc5-b0c494072853"
       (reference "R5") (unit 1) (value "120") (footprint "Resistor_SMD:R_1206_3216Metric")
     )
     (path "/73ef84a6-fa13-46f4-a12b-a9bf8ee2afd1"
-      (reference "R6") (unit 1) (value "20k-PU") (footprint "Resistor_SMD:R_1206_3216Metric")
+      (reference "R6") (unit 1) (value "1k-PU") (footprint "Resistor_SMD:R_1206_3216Metric")
     )
     (path "/04fd6b4e-54d1-4f4d-868f-0cc46c425a4c"
       (reference "R7") (unit 1) (value "3.3k") (footprint "Resistor_SMD:R_1206_3216Metric")
