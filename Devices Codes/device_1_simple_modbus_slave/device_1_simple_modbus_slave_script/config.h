@@ -19,3 +19,6 @@
 uint16_t holding_registers[NUMBER_OF_HOLDING_REGISTERS];
 uint16_t input_registers[NUMBER_OF_INPUT_REGISTERS];
 
+//ADDITIONAL PINS
+#define water_level_sensor A0
+
