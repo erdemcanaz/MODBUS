@@ -6,7 +6,7 @@ SoftwareSerial RS485_Serial(RS485_SOFTWARE_SERIAL_RX_PIN, RS485_SOFTWARE_SERIAL_
 void setup() {
   pinMode(water_level_sensor, INPUT);
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.begin(HARDWARE_SERIAL_BAUD_RATE);
+  if(DEBUG)Serial.begin(HARDWARE_SERIAL_BAUD_RATE);
 
   configure_RS485_pins();
   RS485_Serial.begin(RS485_SOFTWARE_SERIAL_BAUD_RATE);
@@ -17,7 +17,7 @@ bool led_state = false;
 
 void loop() {
   slave_operate();
-  //calculate_water_sensor_distance_and_save_it_to_input_reg_0();
+  calculate_water_sensor_distance_and_save_it_to_input_reg_0();
   if(millis()-last_time > 500){
     last_time=millis();
     led_state = !led_state;
@@ -43,7 +43,7 @@ void calculate_water_sensor_distance_and_save_it_to_input_reg_0() {
   }
   uint16_t measured_distance_integer_cm = (uint16_t)(measured_distance_floating_meters * 100);
   setter_write_input_register(0,measured_distance_integer_cm);
-  if (DEBUG) Serial.println("Meaured distance is: " + String(measured_distance_integer_cm) + " cm");
+  if (WATER_LEVEL_DEBUG) Serial.println("Meaured distance is: " + String(measured_distance_integer_cm) + " cm");
 }
 
 uint16_t getter_read_holding_register(uint8_t holding_register_index) {

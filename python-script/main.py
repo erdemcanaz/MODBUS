@@ -99,6 +99,11 @@ while(True):
             get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
     
             get_water_level_simple_slave_water_level(SimpleSlaveInstance = water_level_sensor, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            
+            run_Tescom_SDDPV2200M_driver(Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            time.sleep(60)
+            stop_Tescom_SDDPV2200M_driver(Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            time.sleep(60)
     except Exception:
         print(traceback.format_exc())
         continue
