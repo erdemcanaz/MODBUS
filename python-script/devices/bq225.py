@@ -17,6 +17,11 @@ class BQ225():
         self.__humidity_percentage = None
         self.__temperature_celcius = None
 
+    def getter_humidity_percentage(self):
+        return self.__humidity_percentage
+    def getter_temperature_celcius(self):
+        return self.__temperature_celcius
+    
     def get_slave_address(self):
         return self.__slave_address
  
@@ -104,9 +109,7 @@ class BQ225():
             return False
         
         if package_bytes[0] == 255 and package_bytes[3] == 2 and package_bytes[4] == 0:
-            #TODO: remove 
-            print(package_bytes[26],package_bytes[27],package_bytes[28],package_bytes[29],package_bytes[30],package_bytes[31],package_bytes[32])
-            if True or package_bytes[26]==7 and package_bytes[27]==self.__slave_address and package_bytes[28]==3:
+            if package_bytes[26]==7 and package_bytes[27]==self.__slave_address and package_bytes[28]==3:
                 temperature_significant_byte = package_bytes[30]
                 temperature_least_byte = package_bytes[31]
                 temperature = temperature_significant_byte*256 + temperature_least_byte

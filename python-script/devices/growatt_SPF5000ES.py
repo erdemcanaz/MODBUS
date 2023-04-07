@@ -15,11 +15,26 @@ class Growatt_SPF5000ES():
         self.__BESS_voltage= None
         self.__load_power = None
         self.__pv_power = None 
+        self.__BESS_power = None
+        self.__BESS_current = None
 
         self.PRINT_BESS_VOLTAGE = print_BESS_voltage
         self.PRINT_LOAD_POWER = print_load_power
         self.PRINT_PV_POWER = print_pv_power
 
+    def getter_BESS_voltage(self):
+        return self.__BESS_voltage
+    def getter_load_power(self):
+        return self.__load_power
+    def getter_pv_power(self):
+        return self.__pv_power
+    def calculate_BESS_power(self):
+        self.__BESS_power = self.__pv_power - self.__load_power
+        return self.__BESS_power
+    def calculate_BESS_current(self):
+        self.__BESS_current = self.__BESS_power/self.__BESS_voltage
+        return self.__BESS_current
+    
     def get_slave_address(self):
         return self.__slave_address
  
@@ -70,7 +85,11 @@ class Growatt_SPF5000ES():
                 if(self.PRINT_BESS_VOLTAGE):print(time.strftime("%H:%M:%S", time.localtime()),"BESS voltage (V):".ljust(40,"-"),self.__BESS_voltage)
                 return True
             else:
+                print("error 1")
                 return False
+        else:
+            print("error 2")
+            return False
   
     def load_power_request_dict(self):
         if self.__lora_address is None:raise Exception
@@ -153,12 +172,12 @@ class Growatt_SPF5000ES():
             return False
         
 
-        if package_bytes[0] == 255 and package_bytes[3] == 2 and package_bytes[4] == 0:
+        if package_bytes[0] == 255 and package_bytes[3] == 2 and package_bytes[4] == 0: 
             if package_bytes[26]==7 and package_bytes[27]==self.__slave_address and package_bytes[28]==4:
                 pv_power_significant_byte = package_bytes[30]
                 pv_power_least_byte = package_bytes[31]
                 pv_power = pv_power_significant_byte*256 + pv_power_least_byte
-                self.__pv_power = pv_power/100
+                self.__pv_power = pv_power/10
                 if(self.PRINT_PV_POWER):print(time.strftime("%H:%M:%S", time.localtime()),"PV Power (W):".ljust(40,"-"),self.__pv_power)
                 return True
             else:

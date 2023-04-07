@@ -15,6 +15,9 @@ class water_level_simple_slave():
 
         self.__water_level = None
 
+    def getter_water_level(self):
+        return self.__water_level
+    
     def get_slave_address(self):
         return self.__slave_address
  
