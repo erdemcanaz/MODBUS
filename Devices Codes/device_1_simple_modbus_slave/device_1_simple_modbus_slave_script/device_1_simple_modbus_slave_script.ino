@@ -5,16 +5,24 @@ SoftwareSerial RS485_Serial(RS485_SOFTWARE_SERIAL_RX_PIN, RS485_SOFTWARE_SERIAL_
 
 void setup() {
   pinMode(water_level_sensor, INPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(HARDWARE_SERIAL_BAUD_RATE);
 
   configure_RS485_pins();
   RS485_Serial.begin(RS485_SOFTWARE_SERIAL_BAUD_RATE);
 }
 
+unsigned long last_time = 0;
+bool led_state = false;
+
 void loop() {
   slave_operate();
-  calculate_water_sensor_distance_and_save_it_to_input_reg_0();
-  delay(500);
+  //calculate_water_sensor_distance_and_save_it_to_input_reg_0();
+  if(millis()-last_time > 500){
+    last_time=millis();
+    led_state = !led_state;
+    digitalWrite(LED_BUILTIN, led_state);
+  }
 }
 
 

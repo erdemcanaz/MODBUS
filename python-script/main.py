@@ -4,6 +4,7 @@ from devices.bq225 import BQ225
 from devices.tescom_SDDPV2200M import Tescom_SDDPV2200M
 from devices.growatt_SPF5000ES import Growatt_SPF5000ES
 from devices.master_lora import MasterLora
+from devices.water_level_simple_slave import water_level_simple_slave
 
 
 def connect_to_master_device(MasterLoraInstance:MasterLora ,SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):    
@@ -68,7 +69,11 @@ def get_inverter_pv_power(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialMid
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     Growatt_SPF5000ESInstance.is_valid_pv_power_response(response = response)
-
+def get_water_level_simple_slave_water_level(SimpleSlaveInstance:water_level_simple_slave, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = SimpleSlaveInstance.water_level_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    SimpleSlaveInstance.is_valid_water_level_response(response = response)
 
 
 SerialMiddleware = serial_middleware.SerialMiddleware(is_debugging = False)
@@ -76,6 +81,8 @@ MasterLora = MasterLora(is_debugging = False)
 surec_lab_BQ225 = BQ225(lora_address = 5, slave_address = 141,is_debugging=True, print_humidity = True, print_temperature= True)
 machine_laboratory_inverter = Growatt_SPF5000ES(lora_address = 3, slave_address = 16,is_debugging=True , print_BESS_voltage = True, print_load_power= True, print_pv_power= True)
 Tescom_SDDPV2200M_1 = Tescom_SDDPV2200M(lora_address = 3, slave_address = 15,is_debugging=True)
+water_level_sensor = water_level_simple_slave(lora_address = 3, slave_address = 235,is_debugging=True, print_water_level = True)
+
 while(True):
 
     try:
@@ -90,6 +97,8 @@ while(True):
             get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
             get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
             get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+    
+            get_water_level_simple_slave_water_level(SimpleSlaveInstance = water_level_sensor, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
     except Exception:
         print(traceback.format_exc())
         continue
