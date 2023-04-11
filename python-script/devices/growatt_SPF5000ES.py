@@ -2,7 +2,7 @@ import random,time
 import useful_methods
 
 class Growatt_SPF5000ES():
-    def __init__(self, lora_address = None, slave_address = None, is_debugging = False, print_BESS_voltage = False, print_load_power = False, print_pv_power = False):
+    def __init__(self, lora_address = None, slave_address = None, is_debugging = False, print_BESS_voltage = False, print_load_power = False, print_pv_power = False, print_grid_power = False):
         if lora_address == None or slave_address == None :raise Exception
         if lora_address > 65535 or lora_address<0 :raise Exception
         if slave_address > 255 or slave_address<0 :raise Exception
@@ -15,12 +15,14 @@ class Growatt_SPF5000ES():
         self.__BESS_voltage= None
         self.__load_power = None
         self.__pv_power = None 
+        self.__grid_power = None
         self.__BESS_power = None
         self.__BESS_current = None
 
         self.PRINT_BESS_VOLTAGE = print_BESS_voltage
         self.PRINT_LOAD_POWER = print_load_power
         self.PRINT_PV_POWER = print_pv_power
+        self.PRINT_GRID_POWER = print_grid_power
 
     def getter_BESS_voltage(self):
         return self.__BESS_voltage
@@ -28,8 +30,11 @@ class Growatt_SPF5000ES():
         return self.__load_power
     def getter_pv_power(self):
         return self.__pv_power
+    def getter_grid_power(self):
+        return self.__grid_power
+    
     def calculate_BESS_power(self):
-        self.__BESS_power = self.__pv_power - self.__load_power
+        self.__BESS_power = (self.__pv_power + self.__grid_power) - self.__load_power
         return self.__BESS_power
     def calculate_BESS_current(self):
         self.__BESS_current = self.__BESS_power/self.__BESS_voltage
@@ -179,6 +184,52 @@ class Growatt_SPF5000ES():
                 pv_power = pv_power_significant_byte*256 + pv_power_least_byte
                 self.__pv_power = pv_power/10
                 if(self.PRINT_PV_POWER):print(time.strftime("%H:%M:%S", time.localtime()),"PV Power (W):".ljust(40,"-"),self.__pv_power)
+                return True
+            else:
+                return False
+  
+    def grid_power_request_dict(self):
+        if self.__lora_address is None:raise Exception
+        if self.__slave_address is None:raise Exception
+
+        request_identifier_16_bit = random.randint(0,65535)
+        
+        modbus_command_bytes = [self.__slave_address,4,0,37,0,1]        
+        crc, crc_lst, crc_sig = useful_methods.calculate_crc_for_bytes_list(modbus_command_bytes)
+        modbus_command_bytes.extend([crc_lst, crc_sig])
+
+        command_dict = {
+            "function_code":2,
+            "sub_function_code":0,
+            "slave_lora_address":self.__lora_address,
+            "request_data_count":8,
+            "request_data_bytes":modbus_command_bytes
+            }
+
+
+        return {
+            "request_identifier_16":request_identifier_16_bit,
+            "command_dict":command_dict
+        }
+
+    def is_valid_grid_power_response(self,response):
+        #TODO: validate CRC
+        if(self.IS_DEBUGGING):print("\n",time.strftime("%H:%M:%S", time.localtime()),"is_valid_grid_power_response: " + str(response[0])+"\n"+str(response[1])+"\n"+str(response[2]))
+        response_status = response[0]
+        package_bytes = response[1]
+
+        if response_status != True:
+            if(self.IS_DEBUGGING):print("This reponse is not classified as grid power response " + str(response_status))
+            return False
+        
+
+        if package_bytes[0] == 255 and package_bytes[3] == 2 and package_bytes[4] == 0: 
+            if package_bytes[26]==7 and package_bytes[27]==self.__slave_address and package_bytes[28]==4:
+                grid_power_significant_byte = package_bytes[30]
+                grid_power_least_byte = package_bytes[31]
+                grid_power = grid_power_significant_byte*256 +grid_power_least_byte
+                self.__grid_power = grid_power/10
+                if(self.PRINT_GRID_POWER):print(time.strftime("%H:%M:%S", time.localtime()),"Grid Power (W):".ljust(40,"-"),self.__grid_power)
                 return True
             else:
                 return False

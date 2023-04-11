@@ -1,6 +1,6 @@
 //config for device_1_master_script
 //PARAMETRIC VARIABLES
-#define DEBUG false
+#define DEBUG true
 #define WATER_LEVEL_DEBUG false
 
 //SOFTWARE RELATED STATIC VARIABLES
