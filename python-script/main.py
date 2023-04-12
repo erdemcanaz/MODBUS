@@ -120,7 +120,7 @@ def measurement_block():
 
     if get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
         print("load power:", machine_laboratory_inverter.getter_load_power())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "load-power", data =str(machine_laboratory_inverter.getter_BESS_voltage()))
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "load-power", data =str(machine_laboratory_inverter.getter_load_power()))
     else:
         print("load power: not measured")
         logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "load-power", data = "ERROR")
