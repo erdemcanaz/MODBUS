@@ -19,7 +19,7 @@ def append_to_txt_file(device = "DEFAULT_DEVICE", operation_tag = "DEFAULT_OPERA
         file.write(text)
 
 
-def append_to_csv_file(device = "DEFAULT_DEVICE", operation_tag = "DEFAULT_OPERATION_TAG", tag = "DEFAULT_TAG", data ="NO DATA" ,file_name_w_extension = "default.csv" ):
+def append_to_csv_file(device = "DEFAULT_DEVICE", device_tag="DEFAULT_DEVICE_TAG",operation_tag = "DEFAULT_OPERATION_TAG", tag = "DEFAULT_TAG", data ="NO DATA" ,file_name_w_extension = "default_2.csv" ):
     # Open the CSV file in 'append' mode
     global LOG_FOLDER_PATH
     csv_PATH = LOG_FOLDER_PATH / file_name_w_extension  
@@ -34,7 +34,7 @@ def append_to_csv_file(device = "DEFAULT_DEVICE", operation_tag = "DEFAULT_OPERA
     with open(csv_PATH, 'a+', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
         # Append a new row to the CSV file
-        row = [str(year), str(month), str(day), str(hour), str(minute), str(second), operation_tag, device, tag, data ]
+        row = [str(year), str(month), str(day), str(hour), str(minute), str(second), str(operation_tag), str(device), str(device_tag), str(tag), str(data) ]
         writer.writerow(row)
 
     pass
