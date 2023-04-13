@@ -95,64 +95,67 @@ def measurement_block():
     #Environmental Sensor measurements
     if get_BQ225_humidity(BQ225Instance = surec_lab_BQ225, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
         print("humidity:", surec_lab_BQ225.getter_humidity_percentage())
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225", tag = "humidity", data = str(surec_lab_BQ225.getter_humidity_percentage()))
+        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225", device_tag = "machine-lab-bq225",tag = "humidity", data = str(surec_lab_BQ225.getter_humidity_percentage()))
     else:
         print("humidity: not measured")
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225", tag = "humidity", data ="ERROR")
+        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225", device_tag = "machine-lab-bq225", tag = "humidity", data ="ERROR")
 
     if get_BQ225_temperature(BQ225Instance = surec_lab_BQ225, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
         print("temperature:", surec_lab_BQ225.getter_temperature_celcius())
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225", tag = "temperature", data =str(surec_lab_BQ225.getter_temperature_celcius()))
+        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225",device_tag = "machine-lab-bq225", tag = "temperature", data =str(surec_lab_BQ225.getter_temperature_celcius()))
     else:
         print("temperature: not measured")
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225", tag = "temperature", data ="ERROR")
+        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225",device_tag = "machine-lab-bq225", tag = "temperature", data ="ERROR")
 
     #Inverter related measurements
     all_inverter_measurements_fine = True
 
     if get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
         print("BESS voltage:", machine_laboratory_inverter.getter_BESS_voltage())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "BESS-voltage", data =str(machine_laboratory_inverter.getter_BESS_voltage()))
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "BESS-voltage", data =str(machine_laboratory_inverter.getter_BESS_voltage()))
     else:
         print("BESS voltage: not measured")
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "BESS-voltage", data = "ERROR")
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "BESS-voltage", data = "ERROR")
         all_inverter_measurements_fine = False
 
     if get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
         print("load power:", machine_laboratory_inverter.getter_load_power())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "load-power", data =str(machine_laboratory_inverter.getter_load_power()))
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", device_tag = "machine-lab-inverter", tag = "load-power", data =str(machine_laboratory_inverter.getter_load_power()))
     else:
         print("load power: not measured")
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "load-power", data = "ERROR")
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "load-power", data = "ERROR")
         all_inverter_measurements_fine = False
     
     if get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
         print("pv power:", machine_laboratory_inverter.getter_pv_power())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "pv-power", data =str(machine_laboratory_inverter.getter_pv_power()))
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", device_tag = "machine-lab-inverter", tag = "pv-power", data =str(machine_laboratory_inverter.getter_pv_power()))
     else:
         print("pv power: not measured")
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "pv-power", data = "ERROR")
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", device_tag = "machine-lab-inverter", tag = "pv-power", data = "ERROR")
         all_inverter_measurements_fine = False
     
     if get_inverter_grid_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
         print("grid power:", machine_laboratory_inverter.getter_grid_power())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "grid-power", data =str(machine_laboratory_inverter.getter_grid_power()))
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "grid-power", data =str(machine_laboratory_inverter.getter_grid_power()))
     else:
         print("grid power: not measured")
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "grid-power", data = "ERROR")
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", device_tag = "machine-lab-inverter", tag = "grid-power", data = "ERROR")
         all_inverter_measurements_fine = False
     
     if all_inverter_measurements_fine:
         print("all measurements fine")
         print("BESS power (calculated): ", machine_laboratory_inverter.calculate_BESS_power())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "calculated-BESS-power", data =str(machine_laboratory_inverter.calculate_BESS_power()))
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "calculated-BESS-power", data =str(machine_laboratory_inverter.calculate_BESS_power()))
         print("BESS current (calculated): ", machine_laboratory_inverter.calculate_BESS_current())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", tag = "calculated-BESS-current", data =str(machine_laboratory_inverter.calculate_BESS_current()))
+        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "calculated-BESS-current", data =str(machine_laboratory_inverter.calculate_BESS_current()))
 
     #Water level sensor
     if get_water_level_simple_slave_water_level(SimpleSlaveInstance = water_level_sensor, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
         print("water level:", water_level_sensor.getter_water_level())
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "Nivelco-waterlevel", tag = "water-level", data =str(water_level_sensor.getter_water_level()))
+        logger.append_to_csv_file(operation_tag = "Sensor", device = "Nivelco-waterlevel",device_tag = "machine-lab-water-level", tag = "water-level", data =str(water_level_sensor.getter_water_level()))
+    else:
+        print("water level: not measured")
+        logger.append_to_csv_file(operation_tag = "Sensor", device = "Nivelco-waterlevel",device_tag = "machine-lab-water-level", tag = "water-level", data = "ERROR")
 
 while(True):
 
