@@ -88,7 +88,7 @@ surec_lab_BQ225 = BQ225(lora_address = 5, slave_address = 141,is_debugging=False
 machine_laboratory_inverter = Growatt_SPF5000ES(lora_address = 3, slave_address = 16,is_debugging=False,print_grid_power= False, print_BESS_voltage= False, print_load_power = False, print_pv_power = False)
 Tescom_SDDPV2200M_1 = Tescom_SDDPV2200M(lora_address = 5, slave_address = 15,is_debugging=True)
 water_level_sensor = water_level_simple_slave(lora_address = 5, slave_address = 235,is_debugging=False, print_water_level = False)
-
+#dummy_slave = BQ225(lora_address = 4, slave_address = 141,is_debugging=False, print_humidity = False, print_temperature= False)
 def measurement_block():
     global surec_lab_BQ225, machine_laboratory_inverter, Tescom_SDDPV2200M_1, water_level_sensor, SerialMiddleware, MasterLora
     print("\nmeasurement_block started")
@@ -166,7 +166,8 @@ while(True):
         #LOOP
         while(True):
             measurement_block()
-            
+            #get_BQ225_humidity(BQ225Instance= dummy_slave , SerialMiddlewareInstance= SerialMiddleware, DEBUG= True)
+
 
     except Exception:
         print(traceback.format_exc())
