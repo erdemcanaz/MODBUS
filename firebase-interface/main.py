@@ -49,6 +49,10 @@ n_data_points_str = easygui.enterbox(msg='Enter number of data points', title='D
 n_data_points = int(n_data_points_str)
 var_data = {var_name: deque(np.zeros(n_data_points)) for var_name in var_names}
 
+# get interval of the animation as numeric input
+interval_str = easygui.enterbox(msg='Enter interval of the animation (ms)', title='Interval')
+interval_int = int(interval_str)
+
 # define and adjust figure
 fig, axs = plt.subplots(nrows=len(selected_vars), figsize=(12,6*len(selected_vars)), facecolor='#DEDEDE')
 if len(selected_vars) == 1:
@@ -57,7 +61,7 @@ for ax in axs:
     ax.set_facecolor('#DEDEDE')
 
 # define animation
-ani = FuncAnimation(fig, update_data, interval=1000)
+ani = FuncAnimation(fig, update_data, interval=interval_int)
 
 
 # start loop to continuously update the plot with new data
@@ -72,7 +76,7 @@ while True:
 
         # start animation
         ani.event_source.start()      
-        plt.pause(1)
+        plt.pause(interval_int/1000)
         ani.event_source.stop()
         
 
