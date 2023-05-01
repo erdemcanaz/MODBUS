@@ -1,7 +1,8 @@
 //config for device_1_master_script
 //PARAMETRIC VARIABLES
-#define DEBUG true
+#define DEBUG false
 #define WATER_LEVEL_DEBUG false
+#define DHT11_DEBUG false
 
 //SOFTWARE RELATED STATIC VARIABLES
 #define HARDWARE_SERIAL_BAUD_RATE 9600
