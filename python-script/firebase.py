@@ -21,5 +21,3 @@ def update_firebase_data(data, reference_name = "default", DEBUG = False):
   except Exception as e:
     print("Error while updating firebase data: ", e)
     return False
-
-update_firebase_data({"test": "test"}, "test", True)
