@@ -17,6 +17,11 @@ class BQ225():
         self.__humidity_percentage = None
         self.__temperature_celcius = None
 
+    def getter_humidity_percentage(self):
+        return self.__humidity_percentage
+    def getter_temperature_celcius(self):
+        return self.__temperature_celcius
+    
     def get_slave_address(self):
         return self.__slave_address
  
@@ -49,7 +54,7 @@ class BQ225():
 
     def is_valid_humidity_response(self,response):
         #TODO: validate CRC
-        if(self.IS_DEBUGGING):print(time.strftime("%H:%M:%S", time.localtime()),"is_valid_humidity_response: " + str(response[0])+"\n"+str(response[1])+"\n"+str(response[2]))
+        if(self.IS_DEBUGGING):print("\n",time.strftime("%H:%M:%S", time.localtime()),"is_valid_humidity_response: " + str(response[0])+"\n"+str(response[1])+"\n"+str(response[2]))
         response_status = response[0]
         package_bytes = response[1]
 
@@ -95,7 +100,7 @@ class BQ225():
     
     def is_valid_temperature_response(self,response):
         #TODO: validate CRC
-        if(self.IS_DEBUGGING):print(time.strftime("%H:%M:%S", time.localtime()),"is_valid_temperature_response: " + str(response[0])+"\n"+str(response[1])+"\n"+str(response[2]))
+        if(self.IS_DEBUGGING):print("\n",time.strftime("%H:%M:%S", time.localtime()),"is_valid_temperature_response: " + str(response[0])+"\n"+str(response[1])+"\n"+str(response[2]))
         response_status = response[0]
         package_bytes = response[1]
 
@@ -103,7 +108,6 @@ class BQ225():
             if(self.IS_DEBUGGING):print("This reponse is not classified as temperature " + str(response_status))
             return False
         
-
         if package_bytes[0] == 255 and package_bytes[3] == 2 and package_bytes[4] == 0:
             if package_bytes[26]==7 and package_bytes[27]==self.__slave_address and package_bytes[28]==3:
                 temperature_significant_byte = package_bytes[30]
