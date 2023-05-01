@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 from collections import deque
-import psutil
+import easygui
 
 # define function to update data
 def update_data(frame):
@@ -36,15 +36,18 @@ var_values = {'BESS-voltage': 53.1, 'calculated-BESS-current': -0.13182674199623
 var_names = list(var_values.keys())
 var_data = {var_name: deque(np.zeros(100)) for var_name in var_names}
 
+# create a dialog box to select variables to plot
+selected_vars = easygui.multchoicebox(msg='Select variables to plot', title='Plot Variables', choices=var_names)
+
 # define and adjust figure
-fig, axs = plt.subplots(nrows=len(var_names), figsize=(12,6*len(var_names)), facecolor='#DEDEDE')
-if len(var_names) == 1:
+fig, axs = plt.subplots(nrows=len(selected_vars), figsize=(12,6*len(selected_vars)), facecolor='#DEDEDE')
+if len(selected_vars) == 1:
     axs = [axs]
 for ax in axs:
     ax.set_facecolor('#DEDEDE')
 
 # define animation
-ani = FuncAnimation(fig, update_data, interval=1000)
+ani = FuncAnimation(fig, update_data, interval=100)
 
 # start loop to continuously update the plot with new data
 while True:
@@ -53,10 +56,21 @@ while True:
         ref = db.reference("monibostan_ODTU")
         data = ref.get()
         for key, value in data.items():
-            if key in var_names:
+            if key in selected_vars:
                 var_values[key] = value
 
-       
+        # update the variables to plot based on the user's selection
+        selected_vars = easygui.multchoicebox(msg='Select variables to plot', title='Plot Variables', choices=var_names)
+
+        # update the figure based on the new selection
+        for ax in axs:
+            ax.clear()
+        axs = axs[:len(selected_vars)]
+        var_data = {var_name: deque(np.zeros(100)) for var_name in selected_vars}
+        for i, var_name in enumerate(selected_vars):
+            axs[i].set_title(var_name)
+            axs[i].set_facecolor('#DEDEDE')
+
         # start animation
         ani.event_source.start()
         plt.pause(5)
