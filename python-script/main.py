@@ -54,6 +54,17 @@ def stop_Tescom_SDDPV2200M_driver(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, S
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     Tescom_SDDPV2200MInstance.is_valid_driver_stop_response(response = response)
+def get_Tescom_SDDPV2200M_dc_link_voltage(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = Tescom_SDDPV2200MInstance.driver_DC_link_voltage_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    return Tescom_SDDPV2200MInstance.is_valid_DC_link_voltage_response(response = response)
+def get_Tescom_SDDPV220M_ac_frequency(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = Tescom_SDDPV2200MInstance.driver_motor_frequency_request_dict()
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    return Tescom_SDDPV2200MInstance.is_valid_driver_motor_frequency_response(response = response)
+
 def get_inverter_BESS_voltage(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
     request_dict = Growatt_SPF5000ESInstance.BESS_voltage_request_dict()
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
@@ -84,9 +95,9 @@ def get_water_level_simple_slave_water_level(SimpleSlaveInstance:water_level_sim
 
 SerialMiddleware = serial_middleware.SerialMiddleware(is_debugging = False)
 MasterLora = MasterLora(is_debugging = False)
-surec_lab_BQ225 = BQ225(lora_address = 5, slave_address = 141,is_debugging=False, print_humidity = False, print_temperature= False)
-machine_laboratory_inverter = Growatt_SPF5000ES(lora_address = 3, slave_address = 16,is_debugging=False,print_grid_power= False, print_BESS_voltage= False, print_load_power = False, print_pv_power = False)
-Tescom_SDDPV2200M_1 = Tescom_SDDPV2200M(lora_address = 5, slave_address = 15,is_debugging=True)
+surec_lab_BQ225 = BQ225(lora_address = 30, slave_address = 141,is_debugging=False, print_humidity = False, print_temperature= False)
+machine_laboratory_inverter = Growatt_SPF5000ES(lora_address = 10, slave_address = 16,is_debugging=True,print_grid_power= True, print_BESS_voltage= True, print_load_power = True, print_pv_power = True)
+Tescom_SDDPV2200M_1 = Tescom_SDDPV2200M(lora_address = 30, slave_address = 15,is_debugging=True, print_dc_link_voltage= True, print_ac_frequency= True)
 water_level_sensor = water_level_simple_slave(lora_address = 5, slave_address = 235,is_debugging=False, print_water_level = False)
 #dummy_slave = BQ225(lora_address = 4, slave_address = 141,is_debugging=False, print_humidity = False, print_temperature= False)
 def measurement_block():
@@ -178,9 +189,22 @@ while(True):
         
         #LOOP
         while(True):
-            measurement_block()
-            #get_BQ225_humidity(BQ225Instance= dummy_slave , SerialMiddlewareInstance= SerialMiddleware, DEBUG= True)
+            stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            
+            #get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            #get_inverter_grid_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            #get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            #get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            #print("Calculated BESS POWER", machine_laboratory_inverter.calculate_BESS_power())  
+            #print("Calculated BESS CURRENT", machine_laboratory_inverter.calculate_BESS_current())          
+            
+            #run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            time.sleep(3)
+            get_Tescom_SDDPV2200M_dc_link_voltage(Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            time.sleep(3)
+            get_Tescom_SDDPV220M_ac_frequency(Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
 
+            time.sleep(3)
 
     except Exception:
         print(traceback.format_exc())

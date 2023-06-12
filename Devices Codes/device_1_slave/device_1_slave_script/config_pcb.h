@@ -27,7 +27,7 @@
 
 
 #define DEVICE_CHANNEL 12     //0-255
-#define DEVICE_ADDRESS 2  //0-65535 // LORA-ID
+#define DEVICE_ADDRESS 20  //0-65535 // LORA-ID
 #define UART_PARITY_MODE 3    //3->8N1
 #define UART_BAUD_MODE 3      //3-> 9600BPS
 #define AIR_DATA_RATE_MODE 2  //2-> 2.4Kbps
