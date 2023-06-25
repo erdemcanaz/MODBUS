@@ -37,6 +37,7 @@ class Growatt_SPF5000ES():
     def calculate_BESS_power(self):
         if self. __pv_power != None and self.__grid_power != None and self.__load_power != None:
             self.__BESS_power = (self.__pv_power + self.__grid_power) - self.__load_power
+            return self.__BESS_power
         else:
             raise Exception( "BESS power cannot be calculated because one of the following is None: pv_power, grid_power, load_power")
     def calculate_BESS_current(self):

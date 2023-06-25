@@ -54,6 +54,22 @@ def stop_Tescom_SDDPV2200M_driver(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, S
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     Tescom_SDDPV2200MInstance.is_valid_driver_stop_response(response = response)
+def get_Tescom_SDDPV2200M_driver_VFD_frequency(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+        request_dict = Tescom_SDDPV2200MInstance.get_Tescom_SDDPV2200M_driver_VFD_frequency_dict() 
+        SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+        response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+        Tescom_SDDPV2200MInstance.is_valid_get_Tescom_SDDPV2200M_driver_VFD_frequency_response(response = response)
+def get_Tescom_SDDPV2200M_driver_VFD_voltage(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
+    request_dict = Tescom_SDDPV2200MInstance.get_Tescom_SDDPV2200M_DC_voltage() 
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    Tescom_SDDPV2200MInstance.is_valid_get_Tescom_SDDPV2200M_DC_voltage_response(response = response)
+def set_Tescom_SDDPV2200M_driver_voltage_reference(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False, reference_voltage = None):
+    request_dict = Tescom_SDDPV2200MInstance.set_driver_reference_voltage_dict(reference_voltage= 355)
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    Tescom_SDDPV2200MInstance.is_valid_driver_reference_voltage_response(response = response)
+
 def get_inverter_BESS_voltage(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
     request_dict = Growatt_SPF5000ESInstance.BESS_voltage_request_dict()
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
@@ -79,11 +95,6 @@ def set_inverter_charging_current(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, S
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     Growatt_SPF5000ESInstance.is_valid_set_inverter_charging_current_response(response = response)
-
-# request_dict = machine_laboratory_inverter.set_inverter_charging_current_dict(0)
-# SerialMiddleware.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
-# response = SerialMiddleware.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
-
 
 def get_water_level_simple_slave_water_level(SimpleSlaveInstance:water_level_simple_slave, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
     request_dict = SimpleSlaveInstance.water_level_request_dict()
@@ -186,22 +197,29 @@ while(True):
         #SETUP
         connect_to_master_device(DEBUG = False, SerialMiddlewareInstance = SerialMiddleware, MasterLoraInstance= MasterLora)
         
+        
+        #run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+        stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
         #LOOP
         while(True):
-            #stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-            #run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-
+            pass
+            
             get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
             get_inverter_grid_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
             get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
             get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-            
             print("Calculated BESS POWER", machine_laboratory_inverter.calculate_BESS_power())  
             print("Calculated BESS CURRENT", machine_laboratory_inverter.calculate_BESS_current())          
 
-     
 
-            set_inverter_charging_current(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False, charging_current = 17.2135)
+            get_Tescom_SDDPV2200M_driver_VFD_frequency( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            get_Tescom_SDDPV2200M_driver_VFD_voltage( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            set_Tescom_SDDPV2200M_driver_voltage_reference( reference_voltage= 380,Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+           
+     
+            #get_Tescom_SDDPV2200M_driver_VFD_voltage( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+
+
 
 
     except Exception:
