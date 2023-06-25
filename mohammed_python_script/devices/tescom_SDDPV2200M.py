@@ -18,6 +18,9 @@ class Tescom_SDDPV2200M():
         
         self.IS_DEBUGGING = is_debugging
 
+    def getter_VFD_frequency(self):
+        return self.__VFD_frequency
+    
 
     def get_slave_address(self):
         return self.__slave_address

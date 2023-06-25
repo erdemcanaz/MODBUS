@@ -25,6 +25,8 @@ class Growatt_SPF5000ES():
         self.PRINT_PV_POWER = print_pv_power
         self.PRINT_GRID_POWER = print_grid_power
 
+    def getter_BESS_power(self):
+        return self.__BESS_power
     def getter_BESS_voltage(self):
         return self.__BESS_voltage
     def getter_load_power(self):
@@ -46,7 +48,6 @@ class Growatt_SPF5000ES():
     
     def get_slave_address(self):
         return self.__slave_address
- 
     def get_lora_address(self):
         return self.__lora_address
     
