@@ -18,6 +18,7 @@ class Growatt_SPF5000ES():
         self.__grid_power = None
         self.__BESS_power = None
         self.__BESS_current = None
+        self.__inverter_charging_current = None
 
         self.PRINT_BESS_VOLTAGE = print_BESS_voltage
         self.PRINT_LOAD_POWER = print_load_power
@@ -34,8 +35,10 @@ class Growatt_SPF5000ES():
         return self.__grid_power
     
     def calculate_BESS_power(self):
-        self.__BESS_power = (self.__pv_power + self.__grid_power) - self.__load_power
-        return self.__BESS_power
+        if self. __pv_power != None and self.__grid_power != None and self.__load_power != None:
+            self.__BESS_power = (self.__pv_power + self.__grid_power) - self.__load_power
+        else:
+            raise Exception( "BESS power cannot be calculated because one of the following is None: pv_power, grid_power, load_power")
     def calculate_BESS_current(self):
         self.__BESS_current = self.__BESS_power/self.__BESS_voltage
         return self.__BESS_current
@@ -234,3 +237,56 @@ class Growatt_SPF5000ES():
             else:
                 return False
   
+    def set_inverter_charging_current_dict(self, charging_current):
+        if self.__lora_address is None:raise Exception
+        if self.__slave_address is None:raise Exception
+
+        charging_current = int(round(charging_current))
+        if charging_current < 0 or charging_current > 50:
+            raise Exception("Charging current must be between 0 and 50 (A)")
+        else:
+            self.__inverter_charging_current = charging_current            
+        
+        sig_byte = 0
+        lst_byte = charging_current
+
+        request_identifier_16_bit = random.randint(0,65535)        
+        modbus_command_bytes = [self.__slave_address,6,0,34,sig_byte,lst_byte]        
+        crc, crc_lst, crc_sig = useful_methods.calculate_crc_for_bytes_list(modbus_command_bytes)
+        modbus_command_bytes.extend([crc_lst, crc_sig])
+
+        command_dict = {
+            "function_code":2,
+            "sub_function_code":0,
+            "slave_lora_address":self.__lora_address,
+            "request_data_count":8,
+            "request_data_bytes":modbus_command_bytes
+            }
+
+
+        return {
+            "request_identifier_16":request_identifier_16_bit,
+            "command_dict":command_dict
+        }
+    
+    def is_valid_set_inverter_charging_current_response(self,response):
+            #TODO: validate CRC
+            if(self.IS_DEBUGGING):print("\n",time.strftime("%H:%M:%S", time.localtime()),"is_valid_set_inverter_charging_current_response: " + str(response[0])+"\n"+str(response[1])+"\n"+str(response[2]))
+            response_status = response[0]
+            package_bytes = response[1]
+
+            if response_status != True:
+                if(self.IS_DEBUGGING):print("This reponse is not classified as set inverter charging current " + str(response_status))
+                return False
+            
+
+            if package_bytes[0] == 255 and package_bytes[3] == 2 and package_bytes[4] == 0: 
+                if package_bytes[26]==8 and package_bytes[27]==self.__slave_address and package_bytes[28]==6:
+                    inverter_charging_current_significant_byte = package_bytes[31]
+                    inverter_charging_current_least_byte = package_bytes[32]
+                    self.__inverter_charging_current = inverter_charging_current_significant_byte*256 +inverter_charging_current_least_byte
+                    if(self.PRINT_GRID_POWER):print(time.strftime("%H:%M:%S", time.localtime()),"Inverter charging current (A):".ljust(40,"-"),self.__inverter_charging_current)
+                    return True
+                else:
+                    return False
+    

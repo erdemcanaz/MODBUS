@@ -74,7 +74,17 @@ def get_inverter_grid_power(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialM
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     return Growatt_SPF5000ESInstance.is_valid_grid_power_response(response = response)
-    
+def set_inverter_charging_current(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, charging_current:float, DEBUG:bool = False, chargin_current = None, ):
+    request_dict = Growatt_SPF5000ESInstance.set_inverter_charging_current_dict(charging_current = charging_current)
+    SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+    response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+    Growatt_SPF5000ESInstance.is_valid_set_inverter_charging_current_response(response = response)
+
+# request_dict = machine_laboratory_inverter.set_inverter_charging_current_dict(0)
+# SerialMiddleware.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
+# response = SerialMiddleware.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
+
+
 def get_water_level_simple_slave_water_level(SimpleSlaveInstance:water_level_simple_slave, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False):
     request_dict = SimpleSlaveInstance.water_level_request_dict()
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
@@ -178,18 +188,22 @@ while(True):
         
         #LOOP
         while(True):
-            stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-            get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
-            get_inverter_grid_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
-            get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
-            get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = True)
+            #stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            #run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+
+            get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            get_inverter_grid_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            
             print("Calculated BESS POWER", machine_laboratory_inverter.calculate_BESS_power())  
             print("Calculated BESS CURRENT", machine_laboratory_inverter.calculate_BESS_current())          
-            time.sleep(10)
-            run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-            time.sleep(50)
+
+     
+
+            set_inverter_charging_current(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False, charging_current = 17.2135)
+
 
     except Exception:
         print(traceback.format_exc())
         continue
-
