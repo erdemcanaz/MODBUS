@@ -43,9 +43,12 @@ class Growatt_SPF5000ES():
         else:
             raise Exception( "BESS power cannot be calculated because one of the following is None: pv_power, grid_power, load_power")
     def calculate_BESS_current(self):
-        self.__BESS_current = self.__BESS_power/self.__BESS_voltage
-        return self.__BESS_current
-    
+        if self.__BESS_power != None and self.__BESS_voltage != None: 
+            self.__BESS_current = self.__BESS_power/self.__BESS_voltage
+            return self.__BESS_current
+        else:
+            raise Exception( "BESS current cannot be calculated because one of the following is None: BESS_power, BESS_voltage")
+            
     def get_slave_address(self):
         return self.__slave_address
     def get_lora_address(self):

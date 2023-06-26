@@ -201,6 +201,12 @@ while(True):
         stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
         #LOOP
         
+        system_states_dict = {
+            "motor_state":{
+                "motor_mode":1,
+                "last_time_updated":time.time(),
+            }
+        }
 
         inverter_BESS_current_reference = None
         driver_VFD_frequency_reference = None
