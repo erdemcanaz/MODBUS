@@ -1,4 +1,4 @@
-import time,traceback
+import time,traceback,datetime
 import serial_middleware, pprint
 from devices.bq225 import BQ225
 from devices.tescom_SDDPV2200M import Tescom_SDDPV2200M
@@ -90,7 +90,7 @@ def get_inverter_grid_power(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialM
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     return Growatt_SPF5000ESInstance.is_valid_grid_power_response(response = response)
-def set_inverter_charging_current(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, charging_current:float, DEBUG:bool = False, ):
+def set_inverter_charging_current(Growatt_SPF5000ESInstance:Growatt_SPF5000ES, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, charging_current:float, DEBUG:bool = False ):
     request_dict = Growatt_SPF5000ESInstance.set_inverter_charging_current_dict(charging_current = charging_current)
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
@@ -155,23 +155,11 @@ system_variables = {
         }
 
 def setup_block():
-    #set initial inverter charging current as 50
-    system_variables["inverter"]["desired_BESS_charging_current"] = 0
-    system_variables["inverter"]["desired_BESS_charging_current_last_time_updated"] = time.time()
-    #set initial VFD reference frequency as 0
-    system_variables["VFD"]["desired_VFD_frequency"] = 0
-    system_variables["VFD"]["desired_VFD_frequency_last_time_updated"] = time.time()
-
     #be sure that motor is stopped
     stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-    system_variables["VFD"]["mode"] = 5
-    system_variables["VFD"]["mode_last_time_updated"] = time.time()
-
-    time.sleep(1)
-
-    set_inverter_charging_current(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, charging_current = system_variables["inverter"]["desired_BESS_charging_current"], DEBUG = False)
-    system_variables["inverter"]["BESS_charging_current"] = system_variables["inverter"]["desired_BESS_charging_current"]
-    system_variables["inverter"]["BESS_charging_current_last_time_updated"] = time.time()
+    time.sleep(5)
+    set_inverter_charging_current(charging_current = 50, Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+    time.sleep(5)
 
 def measurement_block():
     ##VFD
@@ -222,7 +210,9 @@ def run_motor_at_frequency(tescom_VFD_object= None, serial_middleware_object = N
             print("VFD running")
 
 
-        delta_voltage = min(20, (100/(VFD_frequency_initial+0.01)))
+        
+        #delta_voltage = min(20, (100/(VFD_frequency_initial+0.01))) frequencies around 50 Hz takes too much time to converge
+        delta_voltage = max(0, 10-pow( (VFD_frequency_initial/ 17.5 ),2)) 
         transient_time = 40 if (VFD_frequency_initial < 15) else 5
         recovery_time = 20
 
@@ -267,22 +257,105 @@ while(True):
         #SETUP
         connect_to_master_device(DEBUG = False, SerialMiddlewareInstance = SerialMiddleware, MasterLoraInstance= MasterLora)
 
-        #run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+        #run_motor_at_frequency(tescom_VFD_object= Tescom_SDDPV2200M_1, serial_middleware_object = SerialMiddleware, desired_frequency= 50)
+        #run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)       
         #stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
 
         setup_block()
 
         #LOOP
-        while(True):
-            pass
-            #run_motor_at_frequency(tescom_VFD_object= Tescom_SDDPV2200M_1, serial_middleware_object = SerialMiddleware, desired_frequency= 50)
-        
-            #run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-            measurement_block()
-           
-            
-            
+        algorithm_desired_frequency = 0
+        algorithm_desired_charging_current = 50
 
+
+        block_1_period_s = 60
+        block_1_last_time = time.time()-(block_1_period_s+1)
+
+
+        block_4_glitch_counter = 0
+        while(True):
+            print("measurement block is started at date and time: " + str(datetime.datetime.now()))
+            measurement_block()            
+           
+            #block 1
+            block_1_is_executed = False
+            if(time.time() - block_1_last_time > block_1_period_s):
+                print("block 1")
+                block_1_last_time = time.time()
+                block_1_is_executed = True
+                
+                VFD_power = 28-4.64*Tescom_SDDPV2200M_1.getter_VFD_frequency()+0.915*pow(Tescom_SDDPV2200M_1.getter_VFD_frequency(),2) #Motor dependent variable. Experimental data is fitted to a curve
+                if (Tescom_SDDPV2200M_1.getter_VFD_frequency() == 0 and (1250/0.7) <machine_laboratory_inverter.getter_BESS_power() and machine_laboratory_inverter.getter_BESS_power()<(2200/0.7)):
+                    print("block 1.1")  
+                    algorithm_desired_frequency = 50
+                    algorithm_desired_charging_current = (1-0.7)*(machine_laboratory_inverter.getter_BESS_power())/machine_laboratory_inverter.getter_BESS_voltage()                          
+                elif(Tescom_SDDPV2200M_1.getter_VFD_frequency() == 0 and (2200/0.7)<machine_laboratory_inverter.getter_BESS_power()):
+                    print("block 1.2")
+                    algorithm_desired_frequency = 50
+                    algorithm_desired_charging_current = (machine_laboratory_inverter.getter_BESS_power()-2200)/machine_laboratory_inverter.getter_BESS_voltage()
+                elif(10<Tescom_SDDPV2200M_1.getter_VFD_frequency() and Tescom_SDDPV2200M_1.getter_VFD_frequency()<49.7 and 250<machine_laboratory_inverter.getter_BESS_power() and (machine_laboratory_inverter.getter_BESS_power()+VFD_power)<(2200/0.7)):
+                    print("block 1.3")
+                    algorithm_desired_charging_current = (1-0.7)*(machine_laboratory_inverter.getter_BESS_power()+VFD_power)/machine_laboratory_inverter.getter_BESS_voltage()
+                elif(10<Tescom_SDDPV2200M_1.getter_VFD_frequency() and Tescom_SDDPV2200M_1.getter_VFD_frequency()<49.7 and 250<machine_laboratory_inverter.getter_BESS_power() and (2200/0.7)<(machine_laboratory_inverter.getter_BESS_power()+VFD_power)):
+                    print("block 1.4")
+                    algorithm_desired_charging_current = (machine_laboratory_inverter.getter_BESS_power()+VFD_power-2200)/machine_laboratory_inverter.getter_BESS_voltage()
+                elif(-250<machine_laboratory_inverter.getter_BESS_power() and machine_laboratory_inverter.getter_BESS_power()<250):
+                    print("block 1.5")
+                    algorithm_desired_frequency = 50
+            else:
+                print("remaining time to block 1: " + str(block_1_period_s - (time.time() - block_1_last_time)) + " s")
+
+            #block 2
+            if( True ):
+                print("block 2")
+                if(49.7<Tescom_SDDPV2200M_1.getter_VFD_frequency() and abs(machine_laboratory_inverter.getter_inverter_charging_current()-algorithm_desired_charging_current)<2):
+                    print("block 2.1")
+                    algorithm_desired_charging_current = min( (algorithm_desired_charging_current + 2) ,50)
+                if(49.7<Tescom_SDDPV2200M_1.getter_VFD_frequency() and 4<abs(machine_laboratory_inverter.getter_inverter_charging_current()-algorithm_desired_charging_current)):
+                    print("block 2.2")
+                    algorithm_desired_charging_current = max( (algorithm_desired_charging_current - 2) ,5)
+            
+            #block 3
+            if(not block_1_is_executed):
+                print("block 3")
+                if(Tescom_SDDPV2200M_1.getter_VFD_frequency()<9.7 and abs(algorithm_desired_charging_current-machine_laboratory_inverter.getter_inverter_charging_current())<2):
+                    print("block 3.1")
+                    algorithm_desired_charging_current = min( (algorithm_desired_charging_current + 2) ,50)
+                    algorithm_desired_frequency = 0
+                    block_4_glitch_counter = 0
+                elif(Tescom_SDDPV2200M_1.getter_VFD_frequency()<9.7 and 4< abs(algorithm_desired_charging_current-machine_laboratory_inverter.getter_inverter_charging_current())):
+                    print("block 3.2")
+                    algorithm_desired_charging_current = max( (algorithm_desired_charging_current - 2) ,5)
+                    algorithm_desired_frequency = 0
+                    block_4_glitch_counter = 0
+            #block 4
+            if( True ):
+                print("block 4")
+                if(0<Tescom_SDDPV2200M_1.getter_VFD_frequency() and Tescom_SDDPV2200M_1.getter_VFD_frequency()<12.5 ):
+                    print("block 4.1")
+                    block_4_glitch_counter = block_4_glitch_counter+1
+                else:
+                    print("block 4.2")
+                    block_4_glitch_counter = 0
+
+                if(block_4_glitch_counter>3):
+                    print("block 4.3")
+                    algorithm_desired_frequency = 0
+                    block_4_glitch_counter = 0
+            #block 5
+            if( True ):
+                print("block 5")
+                if(machine_laboratory_inverter.getter_BESS_power()<250):
+                    print("block 5.1")
+                    algorithm_desired_charging_current = 5
+                    if(machine_laboratory_inverter.getter_BESS_power()<-250):
+                        print("block 5.2")
+                        algorithm_desired_frequency = 0
+
+            #execution block       
+            print("execution the algorithm parameters are: algorithm_desired_frequency = ", algorithm_desired_frequency, " algorithm_desired_charging_current = ", algorithm_desired_charging_current)
+            set_inverter_charging_current(charging_current = algorithm_desired_charging_current, Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)  
+            run_motor_at_frequency(desired_frequency= algorithm_desired_frequency, tescom_VFD_object= Tescom_SDDPV2200M_1, serial_middleware_object = SerialMiddleware)
 
     except Exception:
         print(traceback.format_exc())

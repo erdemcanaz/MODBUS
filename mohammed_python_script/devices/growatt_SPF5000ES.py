@@ -25,6 +25,11 @@ class Growatt_SPF5000ES():
         self.PRINT_PV_POWER = print_pv_power
         self.PRINT_GRID_POWER = print_grid_power
 
+    def getter_inverter_charging_current(self):
+        if self.__inverter_charging_current is None:
+            raise Exception("inverter charging current is None")
+        return self.__inverter_charging_current
+    
     def getter_BESS_power(self):
         if self.__BESS_power is None:
             raise Exception("BESS power is None")
