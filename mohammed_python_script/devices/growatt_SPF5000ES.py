@@ -26,14 +26,24 @@ class Growatt_SPF5000ES():
         self.PRINT_GRID_POWER = print_grid_power
 
     def getter_BESS_power(self):
+        if self.__BESS_power is None:
+            raise Exception("BESS power is None")
         return self.__BESS_power
     def getter_BESS_voltage(self):
+        if self.__BESS_voltage is None:
+            raise Exception("BESS voltage is None")
         return self.__BESS_voltage
     def getter_load_power(self):
+        if self.__load_power is None:
+            raise Exception("load power is None")
         return self.__load_power
     def getter_pv_power(self):
+        if self.__pv_power is None:
+            raise Exception("pv power is None")
         return self.__pv_power
     def getter_grid_power(self):
+        if self.__grid_power is None:
+            raise Exception("grid power is None")
         return self.__grid_power
     
     def calculate_BESS_power(self):

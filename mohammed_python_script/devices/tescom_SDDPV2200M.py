@@ -19,9 +19,13 @@ class Tescom_SDDPV2200M():
         self.IS_DEBUGGING = is_debugging
 
     def getter_VFD_frequency(self):
+        if self.__VFD_frequency is None:raise Exception
         return self.__VFD_frequency
     
-
+    def getter_DC_voltage(self):
+        if self.__DC_voltage is None:raise Exception
+        return self.__DC_voltage
+    
     def get_slave_address(self):
         return self.__slave_address
  
@@ -98,14 +102,13 @@ class Tescom_SDDPV2200M():
     def is_valid_driver_stop_response(self,response):
         print(response)
     
-    # 15,6,15,2,sig,lst
     def set_driver_reference_voltage_dict(self, reference_voltage = None):
         if self.__lora_address is None:raise Exception
         if self.__slave_address is None:raise Exception
 
         reference_voltage = int(round(reference_voltage))
-        if (reference_voltage < 350 or reference_voltage > 410):#TODO remove false
-            raise Exception("Reference voltage must be between 350 and 410 (V)")      
+        if (reference_voltage < 100 or reference_voltage > 500):
+            raise Exception(f"Reference voltage must be between 100 and 500 (V) but it is {reference_voltage}")      
         
         sig_byte = int((reference_voltage*10)/256)
         lst_byte = (reference_voltage*10)& 0xFF
@@ -150,11 +153,6 @@ class Tescom_SDDPV2200M():
                
             return False
     
-  
-
-
-
-
     def get_Tescom_SDDPV2200M_DC_voltage(self):
         if self.__lora_address is None:raise Exception
         if self.__slave_address is None:raise Exception

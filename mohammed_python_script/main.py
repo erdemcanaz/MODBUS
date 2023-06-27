@@ -1,5 +1,5 @@
 import time,traceback
-import serial_middleware
+import serial_middleware, pprint
 from devices.bq225 import BQ225
 from devices.tescom_SDDPV2200M import Tescom_SDDPV2200M
 from devices.growatt_SPF5000ES import Growatt_SPF5000ES
@@ -64,7 +64,7 @@ def get_Tescom_SDDPV2200M_driver_VFD_voltage(Tescom_SDDPV2200MInstance:Tescom_SD
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
     Tescom_SDDPV2200MInstance.is_valid_get_Tescom_SDDPV2200M_DC_voltage_response(response = response)
-def set_Tescom_SDDPV2200M_driver_voltage_reference(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False, reference_voltage = None):
+def set_Tescom_SDDPV2200M_driver_reference_voltage(Tescom_SDDPV2200MInstance:Tescom_SDDPV2200M, SerialMiddlewareInstance:serial_middleware.SerialMiddleware, DEBUG:bool = False, reference_voltage = None):
     request_dict = Tescom_SDDPV2200MInstance.set_driver_reference_voltage_dict(reference_voltage= reference_voltage)
     SerialMiddlewareInstance.decorate_and_write_dict_to_serial_utf8(request_dict = request_dict)
     response = SerialMiddlewareInstance.read_package_from_serial_utf8(request_identifier = request_dict["request_identifier_16"])
@@ -108,198 +108,180 @@ surec_lab_BQ225 = BQ225(lora_address = 30, slave_address = 141,is_debugging=Fals
 machine_laboratory_inverter = Growatt_SPF5000ES(lora_address = 10, slave_address = 16,is_debugging=True,print_grid_power= True, print_BESS_voltage= True, print_load_power = True, print_pv_power = True)
 Tescom_SDDPV2200M_1 = Tescom_SDDPV2200M(lora_address = 30, slave_address = 15,is_debugging=True)
 water_level_sensor = water_level_simple_slave(lora_address = 5, slave_address = 235,is_debugging=False, print_water_level = False)
-#dummy_slave = BQ225(lora_address = 4, slave_address = 141,is_debugging=False, print_humidity = False, print_temperature= False)
+
+#======================================================================================================================================================================
+
+system_variables = {           
+            "inverter":{
+
+                    "BESS_voltage":None, #V
+                    "BESS_voltage_last_time_updated":time.time(),
+                    "load_power":None,  #W
+                    "load_power_last_time_updated":time.time(),
+                    "pv_power":None, #W
+                    "pv_power_last_time_updated":time.time(),
+                    "grid_power":None, #W
+                    "grid_power_last_time_updated":time.time(),
+
+                    "BESS_charging_current":None, #A
+                    "BESS_charging_current_last_time_updated":time.time(),
+                    "desired_BESS_charging_current":None, #A
+                    "desired_BESS_charging_current_last_time_updated":time.time(),
+
+                    "calculated_BESS_power":None, #W
+                    "calculated_BESS_power_last_time_updated":time.time(),
+                    "calculated_BESS_current":None, #A
+                    "calculated_BESS_current_last_time_updated":time.time(),
+
+            },
+             "VFD":{
+                "mode":None, #1:run, 5: stop
+                "mode_last_time_updated":time.time(),
+
+                "reference_voltage":None, #V
+                "reference_voltage_last_time_updated":time.time(),
+                "desired_reference_voltage":None, #V
+                "desired_reference_voltage_last_time_updated":time.time(),
+
+                "DC_line_voltage":None, #V
+                "DC_line_voltage_last_time_updated":time.time(),
+
+                "VFD_frequency":None, #Hz            
+                "VFD_frequency_last_time_updated":time.time(),
+                "desired_VFD_frequency":None, #Hz
+                "desired_VFD_frequency_last_time_updated":time.time(),
+                
+            }
+        }
+
+def setup_block():
+    #set initial inverter charging current as 50
+    system_variables["inverter"]["desired_BESS_charging_current"] = 0
+    system_variables["inverter"]["desired_BESS_charging_current_last_time_updated"] = time.time()
+    #set initial VFD reference frequency as 0
+    system_variables["VFD"]["desired_VFD_frequency"] = 0
+    system_variables["VFD"]["desired_VFD_frequency_last_time_updated"] = time.time()
+
+    #be sure that motor is stopped
+    stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+    system_variables["VFD"]["mode"] = 5
+    system_variables["VFD"]["mode_last_time_updated"] = time.time()
+
+    time.sleep(1)
+
+    set_inverter_charging_current(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, charging_current = system_variables["inverter"]["desired_BESS_charging_current"], DEBUG = False)
+    system_variables["inverter"]["BESS_charging_current"] = system_variables["inverter"]["desired_BESS_charging_current"]
+    system_variables["inverter"]["BESS_charging_current_last_time_updated"] = time.time()
+
 def measurement_block():
-    firebase_logger_reference_name = "change_this"
-    global surec_lab_BQ225, machine_laboratory_inverter, Tescom_SDDPV2200M_1, water_level_sensor, SerialMiddleware, MasterLora
-    print("\nmeasurement_block started")
-    #Environmental Sensor measurements
-    if get_BQ225_humidity(BQ225Instance = surec_lab_BQ225, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
-        print("humidity:", surec_lab_BQ225.getter_humidity_percentage())
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225", device_tag = "machine-lab-bq225",tag = "humidity", data = str(surec_lab_BQ225.getter_humidity_percentage()))
-        firebase.update_firebase_data(reference_name=firebase_logger_reference_name,data={"humidity":surec_lab_BQ225.getter_humidity_percentage()})
-    else:
-        print("humidity: not measured")
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225", device_tag = "machine-lab-bq225", tag = "humidity", data ="ERROR")
+    ##VFD
+    get_Tescom_SDDPV2200M_driver_VFD_voltage(Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+    system_variables["VFD"]["DC_line_voltage"] = Tescom_SDDPV2200M_1.getter_DC_voltage()
+    system_variables["VFD"]["DC_line_voltage_last_time_updated"] = time.time()
 
-    if get_BQ225_temperature(BQ225Instance = surec_lab_BQ225, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
-        print("temperature:", surec_lab_BQ225.getter_temperature_celcius())
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225",device_tag = "machine-lab-bq225", tag = "temperature", data =str(surec_lab_BQ225.getter_temperature_celcius()))
-        firebase.update_firebase_data(reference_name=firebase_logger_reference_name,data={"temperature":surec_lab_BQ225.getter_temperature_celcius()})
-    else:
-        print("temperature: not measured")
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "BQ225",device_tag = "machine-lab-bq225", tag = "temperature", data ="ERROR")
+    get_Tescom_SDDPV2200M_driver_VFD_frequency(Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+    system_variables["VFD"]["VFD_frequency"] = Tescom_SDDPV2200M_1.getter_VFD_frequency()
+    system_variables["VFD"]["VFD_frequency_last_time_updated"] = time.time()   
 
-    #Inverter related measurements
-    all_inverter_measurements_fine = True
+    ##inverter
+    get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+    system_variables["inverter"]["BESS_voltage"] = machine_laboratory_inverter.getter_BESS_voltage()
+    system_variables["inverter"]["BESS_voltage_last_time_updated"] = time.time()
 
-    if get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
-        print("BESS voltage:", machine_laboratory_inverter.getter_BESS_voltage())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "BESS-voltage", data =str(machine_laboratory_inverter.getter_BESS_voltage()))
-        firebase.update_firebase_data(reference_name=firebase_logger_reference_name,data={"BESS-voltage":machine_laboratory_inverter.getter_BESS_voltage()})
-    else:
-        print("BESS voltage: not measured")
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "BESS-voltage", data = "ERROR")
-        all_inverter_measurements_fine = False
+    get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+    system_variables["inverter"]["load_power"] = machine_laboratory_inverter.getter_load_power()
+    system_variables["inverter"]["load_power_last_time_updated"] = time.time()
 
-    if get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
-        print("load power:", machine_laboratory_inverter.getter_load_power())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", device_tag = "machine-lab-inverter", tag = "load-power", data =str(machine_laboratory_inverter.getter_load_power()))
-        firebase.update_firebase_data(reference_name=firebase_logger_reference_name,data={"load-power":machine_laboratory_inverter.getter_load_power()})
-    else:
-        print("load power: not measured")
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "load-power", data = "ERROR")
-        all_inverter_measurements_fine = False
-    
-    if get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
-        print("pv power:", machine_laboratory_inverter.getter_pv_power())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", device_tag = "machine-lab-inverter", tag = "pv-power", data =str(machine_laboratory_inverter.getter_pv_power()))
-        firebase.update_firebase_data(reference_name=firebase_logger_reference_name,data={"pv-power":machine_laboratory_inverter.getter_pv_power()})
+    get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+    system_variables["inverter"]["pv_power"] = machine_laboratory_inverter.getter_pv_power()
+    system_variables["inverter"]["pv_power_last_time_updated"] = time.time()
 
-    else:
-        print("pv power: not measured")
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", device_tag = "machine-lab-inverter", tag = "pv-power", data = "ERROR")
-        all_inverter_measurements_fine = False
-    
-    if get_inverter_grid_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
-        print("grid power:", machine_laboratory_inverter.getter_grid_power())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "grid-power", data =str(machine_laboratory_inverter.getter_grid_power()))
-        firebase.update_firebase_data(reference_name=firebase_logger_reference_name,data={"grid-power":machine_laboratory_inverter.getter_grid_power()})
+    get_inverter_grid_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+    system_variables["inverter"]["grid_power"] = machine_laboratory_inverter.getter_grid_power()
+    system_variables["inverter"]["grid_power_last_time_updated"] = time.time()
 
-    else:
-        print("grid power: not measured")
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES", device_tag = "machine-lab-inverter", tag = "grid-power", data = "ERROR")
-        all_inverter_measurements_fine = False
-    
-    if all_inverter_measurements_fine:
-        print("all measurements fine")
-        print("BESS power (calculated): ", machine_laboratory_inverter.calculate_BESS_power())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "calculated-BESS-power", data =str(machine_laboratory_inverter.calculate_BESS_power()))
-        firebase.update_firebase_data(reference_name=firebase_logger_reference_name,data={"calculated-BESS-power":machine_laboratory_inverter.calculate_BESS_power()})
-        print("BESS current (calculated): ", machine_laboratory_inverter.calculate_BESS_current())
-        logger.append_to_csv_file(operation_tag = "Inverter", device = "GROWATT_SPF5000_ES",device_tag = "machine-lab-inverter", tag = "calculated-BESS-current", data =str(machine_laboratory_inverter.calculate_BESS_current()))
-        firebase.update_firebase_data(reference_name=firebase_logger_reference_name,data={"calculated-BESS-current":machine_laboratory_inverter.calculate_BESS_current()})
-        print("BESS state of charge (calculated): ", machine_laboratory_inverter.calculate_BESS_current())
+    system_variables["inverter"]["calculated_BESS_power"] = machine_laboratory_inverter.calculate_BESS_power()
+    system_variables["inverter"]["calculated_BESS_power_last_time_updated"] = time.time()
 
-    #Water level sensor
-    if get_water_level_simple_slave_water_level(SimpleSlaveInstance = water_level_sensor, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False):
-        print("water level:", water_level_sensor.getter_water_level())
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "Nivelco-waterlevel",device_tag = "machine-lab-water-level", tag = "water-level", data =str(water_level_sensor.getter_water_level()))
-        firebase.update_firebase_data(reference_name=firebase_logger_reference_name,data={"water-level":water_level_sensor.getter_water_level()})
-    else:
-        print("water level: not measured")
-        logger.append_to_csv_file(operation_tag = "Sensor", device = "Nivelco-waterlevel",device_tag = "machine-lab-water-level", tag = "water-level", data = "ERROR")
+    system_variables["inverter"]["calculated_BESS_current"] = machine_laboratory_inverter.calculate_BESS_current()
+    system_variables["inverter"]["calculated_BESS_current_last_time_updated"] = time.time()
 
+def run_motor_at_frequency(tescom_VFD_object= None, serial_middleware_object = None, desired_frequency= None):
+        #desired frequency is in Hz
+        get_Tescom_SDDPV2200M_driver_VFD_voltage(Tescom_SDDPV2200MInstance = tescom_VFD_object, SerialMiddlewareInstance = serial_middleware_object, DEBUG = False)
+        VFD_voltage_initial = tescom_VFD_object.getter_DC_voltage()
+        get_Tescom_SDDPV2200M_driver_VFD_frequency(Tescom_SDDPV2200MInstance = tescom_VFD_object, SerialMiddlewareInstance = serial_middleware_object, DEBUG = False)
+        VFD_frequency_initial = tescom_VFD_object.getter_VFD_frequency()
+        
+        if (desired_frequency <= 0):
+            stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = tescom_VFD_object, SerialMiddlewareInstance = serial_middleware_object, DEBUG = False)
+            print("VFD stopped")
+            return None
+        else:
+            run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = tescom_VFD_object, SerialMiddlewareInstance = serial_middleware_object, DEBUG = False)
+            print("VFD running")
+
+
+        delta_voltage = min(20, (100/(VFD_frequency_initial+0.01)))
+        transient_time = 40 if (VFD_frequency_initial < 15) else 5
+        recovery_time = 20
+
+        if desired_frequency >= 50 and VFD_frequency_initial >49.5:
+            return None
+        elif desired_frequency>VFD_frequency_initial:
+            delta_voltage = -delta_voltage
+        elif desired_frequency<VFD_frequency_initial:
+            delta_voltage = delta_voltage
+
+        VFD_voltage_candidate = VFD_voltage_initial + delta_voltage
+        set_Tescom_SDDPV2200M_driver_reference_voltage(Tescom_SDDPV2200MInstance = tescom_VFD_object, SerialMiddlewareInstance = serial_middleware_object, reference_voltage = VFD_voltage_candidate)
+        print("VFD reference voltage set to: " + str(VFD_voltage_candidate) + " V")
+
+        time.sleep(transient_time)        
+        get_Tescom_SDDPV2200M_driver_VFD_frequency(Tescom_SDDPV2200MInstance = tescom_VFD_object, SerialMiddlewareInstance = serial_middleware_object, DEBUG = False)
+        VFD_frequency_now = tescom_VFD_object.getter_VFD_frequency()
+        get_Tescom_SDDPV2200M_driver_VFD_voltage(Tescom_SDDPV2200MInstance = tescom_VFD_object, SerialMiddlewareInstance = serial_middleware_object, DEBUG = False)
+        VFD_voltage_now = tescom_VFD_object.getter_DC_voltage()
+
+        print("VFD frequency now: " + str(VFD_frequency_now) + " Hz")
+        print("VFD voltage now: " + str(VFD_voltage_now) + " V")        
+
+        if(abs(VFD_voltage_now-VFD_voltage_candidate)>12 and False):#impulse check
+            set_Tescom_SDDPV2200M_driver_reference_voltage(Tescom_SDDPV2200MInstance = tescom_VFD_object, SerialMiddlewareInstance = serial_middleware_object, reference_voltage = int(VFD_voltage_now))
+            print("impulse detected, VFD reference voltage set to: " + str(VFD_voltage_now) + " V")
+            time.sleep(recovery_time)
+        elif( abs(desired_frequency-VFD_frequency_now) < abs(desired_frequency-VFD_frequency_initial)): #correct decision
+            print("correct decision, frequency changed from: " + str(VFD_frequency_initial) + " Hz to " + str(VFD_frequency_now) + " Hz")
+            return None
+        elif( abs(desired_frequency-VFD_frequency_now) > abs(desired_frequency-VFD_frequency_initial)):#wrong decision            
+            VFD_voltage_candidate = VFD_voltage_initial - (2*delta_voltage)
+            set_Tescom_SDDPV2200M_driver_reference_voltage(Tescom_SDDPV2200MInstance = tescom_VFD_object, SerialMiddlewareInstance = serial_middleware_object, reference_voltage = VFD_voltage_candidate)
+            print("wrong decision, VFD reference voltage set to: " + str(VFD_voltage_candidate) + " V")
+            time.sleep(recovery_time)    
+        else:
+            pass     
+       
 while(True):
 
     try:
         #SETUP
         connect_to_master_device(DEBUG = False, SerialMiddlewareInstance = SerialMiddleware, MasterLoraInstance= MasterLora)
-        
-        
-        #run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-        stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-        #LOOP
-        
-        system_states_dict = {
-            "motor_state":{
-                "motor_mode":1,
-                "last_time_updated":time.time(),
-            }
-        }
 
-        inverter_BESS_current_reference = None
-        driver_VFD_frequency_reference = None
-        block_setup_timing = {"period_s": None, "last_time": time.time(), "is_complated": False}
-        block_1_timing ={"period_s": 10, "last_time": time.time()}
-        block_2_timing ={"period_s": 10, "last_time": time.time()}
+        #run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+        #stop_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+
+        setup_block()
+
+        #LOOP
         while(True):
             pass
-            
-            #Block setup=========================================
-            if(not block_setup_timing["is_complated"]):
-                inverter_BESS_current_reference = 1
-                set_inverter_charging_current(charging_current = inverter_BESS_current_reference, Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-                
-
-                block_setup_timing["is_complated"] = True
-
-            #Block 1=========================================
-            if(time.time() -block_1_timing["last_time"] > block_1_timing["period_s"]):
-                block_1_timing["last_time"] = time.time()
-                print(f"block 1: {block_1_timing['last_time']}")
-
-                get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-                get_inverter_grid_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-                get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-                get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-                print("Calculated BESS POWER", machine_laboratory_inverter.calculate_BESS_power())  
-                print("Calculated BESS CURRENT", machine_laboratory_inverter.calculate_BESS_current())
-                while(not get_Tescom_SDDPV2200M_driver_VFD_frequency( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)):pass
-
-                if( machine_laboratory_inverter.getter_BESS_power() > 250):
-                    if(Tescom_SDDPV2200M_1.getter_VFD_frequency() == 0 and (0.7*machine_laboratory_inverter.getter_BESS_power()) > 1250):
-                        if(0.7*machine_laboratory_inverter.getter_BESS_power() < 2200):
-                            inverter_BESS_current_reference = 0.3*machine_laboratory_inverter.getter_BESS_power()/machine_laboratory_inverter.getter_BESS_voltage()
-                        else:
-                            inverter_BESS_current_reference = (machine_laboratory_inverter.getter_BESS_power() - 2200)/machine_laboratory_inverter.getter_BESS_voltage()
-                        driver_VFD_frequency_reference = 50
-
-                    elif(Tescom_SDDPV2200M_1.getter_VFD_frequency()>10 and Tescom_SDDPV2200M_1.getter_VFD_frequency()<49.7):
-                            anlytically_calculated_VFD_power = (27.84392 -4.6395*Tescom_SDDPV2200M_1.getter_VFD_frequency()+0.915*pow(Tescom_SDDPV2200M_1.getter_VFD_frequency(),2))
-                            if(0.7*machine_laboratory_inverter.getter_BESS_power()+anlytically_calculated_VFD_power<2200):
-                                inverter_BESS_current_reference = 0.3*(machine_laboratory_inverter.__BESS_power + anlytically_calculated_VFD_power)/machine_laboratory_inverter.getter_BESS_voltage()
-                            else:
-                                inverter_BESS_current_reference = (machine_laboratory_inverter.getter_BESS_power() + anlytically_calculated_VFD_power - 2200)/machine_laboratory_inverter.getter_BESS_voltage()
-                elif(-250 < machine_laboratory_inverter.getter_BESS_power() and machine_laboratory_inverter.getter_BESS_power() < 250):
-                    driver_VFD_frequency_reference = 50
-
-                print("Calculated BESS CURRENT REFERENCE", inverter_BESS_current_reference)
-                print("Calculated VFD FREQUENCY REFERENCE", driver_VFD_frequency_reference)
-                block_1_timing["last_time"] = time.time()
-
-            #Block 2==================================================================================
-            if(time.time() -block_2_timing["last_time"] > block_2_timing["period_s"]):
-                block_2_timing["last_time"] = time.time()
-                print(f"block 2 {block_2_timing['last_time']}")
-                
-                while(not get_Tescom_SDDPV2200M_driver_VFD_frequency( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)):pass          
-
-                if( Tescom_SDDPV2200M_1.getter_VFD_frequency()>49.7):
-                    get_inverter_BESS_voltage(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-                    get_inverter_grid_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-                    get_inverter_load_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-                    get_inverter_pv_power(Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-                    print("Calculated BESS POWER", machine_laboratory_inverter.calculate_BESS_power())  
-                    print("Calculated BESS CURRENT", machine_laboratory_inverter.calculate_BESS_current())
-
-                    if(abs(inverter_BESS_current_reference-machine_laboratory_inverter.calculate_BESS_current()) <2):
-                        inverter_BESS_current_reference = min(inverter_BESS_current_reference+2,50)
-                    elif(inverter_BESS_current_reference-machine_laboratory_inverter.calculate_BESS_current()):
-                        inverter_BESS_current_reference = max(inverter_BESS_current_reference-2, 5)
-
-
-
-                block_2_timing["last_time"] = time.time()
-
-
-
-
-
-
-
-            # input_current = int(input("Enter battery charging current(A): "))
-            # set_inverter_charging_current(charging_current = input_current, Growatt_SPF5000ESInstance = machine_laboratory_inverter, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-
-            # get_Tescom_SDDPV2200M_driver_VFD_frequency( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-            # get_Tescom_SDDPV2200M_driver_VFD_voltage( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-            # inputted_voltage = int(input("Enter voltage reference (V): "))
-            # set_Tescom_SDDPV2200M_driver_voltage_reference( reference_voltage= inputted_voltage,Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            #run_motor_at_frequency(tescom_VFD_object= Tescom_SDDPV2200M_1, serial_middleware_object = SerialMiddleware, desired_frequency= 50)
+        
+            #run_Tescom_SDDPV2200M_driver( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
+            measurement_block()
            
-     
-            #get_Tescom_SDDPV2200M_driver_VFD_voltage( Tescom_SDDPV2200MInstance = Tescom_SDDPV2200M_1, SerialMiddlewareInstance = SerialMiddleware, DEBUG = False)
-
-
+            
+            
 
 
     except Exception:
